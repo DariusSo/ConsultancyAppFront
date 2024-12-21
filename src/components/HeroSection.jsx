@@ -1,7 +1,7 @@
 // src/components/BannerSection.jsx
 import React from 'react';
 
-const BannerSection = () => {
+const HeroSection = () => {
   return (
     <section className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 py-20">
       <div className="container mx-auto px-6 flex flex-col lg:flex-row items-center">
@@ -32,4 +32,4 @@ const BannerSection = () => {
   );
 };
 
-export default BannerSection;
+export default HeroSection;

@@ -6,6 +6,11 @@ import TopHeader from './components/TopHeader'
 import Login from './pages/Login'
 import Register from './pages/Registration'
 import HeroSection from './components/HeroSection'
+import Banner from './components/Banner'
+import SearchBar from './components/SearchBar'
+import ConsultantCard from './components/ConsultantInfoRow'
+import HomePage from './pages/HomePage'
+import ConsultantProfilePage from './pages/ConsultantProfilePage'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -13,7 +18,9 @@ function App() {
   return (
     <>
       <TopHeader/>
-      <HeroSection/>
+      <Banner/>
+      <SearchBar/>
+      <ConsultantProfilePage/>
     </>
   )
 }
