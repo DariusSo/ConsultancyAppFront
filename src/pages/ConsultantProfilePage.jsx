@@ -37,22 +37,41 @@ const ConsultantProfilePage = () => {
     fetchConsultantData();
   }, []);
 
-  const handleAddAvailableTime = () => {
+  const handleAddAvailableTime = async () => {
     if (newAvailableTime) {
       const formattedDate = format(newAvailableTime, "yyyy-MM-dd HH:mm");
       const availableTime = { date: formattedDate }; // Customize time range as needed
-      setAvailableTimes([...availableTimes, availableTime]);
-      setNewAvailableTime(null);
-    
+      const updatedTimes = [...availableTimes, availableTime]; // Create the updated list
+      setAvailableTimes(updatedTimes); // Update the state
+      console.log("Updated Times:", updatedTimes); // Log the updated list
+      updateAvailableTime(updatedTimes);
 
     }
   };
 
   const handleRemoveAvailableTime = (timeToRemove) => {
-    setAvailableTimes(
-      availableTimes.filter((time) => time.date !== timeToRemove.date)
-    );
+
+    const updatedTimes = availableTimes.filter((time) => time.date !== timeToRemove.date);
+
+    setAvailableTimes(updatedTimes);
+    updateAvailableTime(updatedTimes);
   };
+
+  const updateAvailableTime = async (updatedTimes) => {
+    try {
+      const response = await fetch("http://localhost:8080/consultant/dates", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: getCookie("loggedIn"),
+        },
+        body: JSON.stringify(updatedTimes),
+      });
+      const data = await response.text();
+    } catch (err) {
+      console.error("Failed to update dates:", err);
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
