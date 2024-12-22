@@ -11,3 +11,8 @@ export function getCookie(name) {
 export default function setCookie(name, value) {
     document.cookie = name + "=" + (value || "") + "; path=/";
 }
+
+export function eraseCookie(name) {   
+    document.cookie = name+'=; Max-Age=-99999999;';  
+}
+

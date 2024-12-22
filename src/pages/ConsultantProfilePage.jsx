@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { getCookie } from "../modules/Cookies";
 import { format } from "date-fns"; // Install date-fns for easier date formatting
+import { Navigate } from "react-router-dom";
 
 const ConsultantProfilePage = () => {
   const [consultant, setConsultant] = useState(null);
@@ -12,6 +13,8 @@ const ConsultantProfilePage = () => {
   const [newAvailableTime, setNewAvailableTime] = useState(null);
 
   useEffect(() => {
+
+
     // Fetch consultant data
     const fetchConsultantData = async () => {
       try {
@@ -23,6 +26,10 @@ const ConsultantProfilePage = () => {
           },
         });
         const data = await response.json();
+        console.log(response.status)
+        if(response.status == 401){
+          window.location.href = "/login";
+        }
         console.log(JSON.parse(data.availableTime));
         setConsultant(data);
         const parsedTimes = JSON.parse(data.availableTime);
