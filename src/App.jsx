@@ -11,6 +11,7 @@ import SearchBar from './components/SearchBar'
 import ConsultantCard from './components/ConsultantInfoRow'
 import HomePage from './pages/HomePage'
 import ConsultantProfilePage from './pages/ConsultantProfilePage'
+import { Outlet } from 'react-router-dom'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -20,7 +21,7 @@ function App() {
       <TopHeader/>
       <Banner/>
       <SearchBar/>
-      <ConsultantProfilePage/>
+      <Outlet/>
     </>
   )
 }
