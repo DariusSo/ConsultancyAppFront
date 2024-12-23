@@ -3,6 +3,7 @@ import { Dialog } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Import date picker styles
 import { getCookie } from "../modules/Cookies";
+import { loadStripe } from '@stripe/stripe-js';
 
 const ConsultantInfoRow = ({ consultant }) => {
   const {
@@ -60,8 +61,13 @@ const ConsultantInfoRow = ({ consultant }) => {
       alert("Please select a valid date and time before booking.");
       return;
     }
+
+    const stripe = await loadStripe('pk_test_51PlEGq2KAAK191iLnqMx4EzwlRUP93zGEFdyBKynSDBAtbQcJTR2TwbWiKYVSHLVWL0kBq7jK3vyWABKrHB8ZvRm00Kd1TqbuX');
+    if (!stripe) {
+      console.error("Failed to initialize Stripe");
+      return;
+    }
   
-    try {
       // Prepare the booking payload
       const bookingPayload = {
         title: "Consultation Appointment", // Adjust title dynamically if needed
@@ -73,7 +79,7 @@ const ConsultantInfoRow = ({ consultant }) => {
       };
   
       // Send the booking request to the backend
-      const response = await fetch("http://localhost:8080/appointments", {
+      const response = await fetch("http://localhost:8080/create-checkout-session", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -86,13 +92,12 @@ const ConsultantInfoRow = ({ consultant }) => {
         throw new Error("Failed to book the appointment.");
       }
   
-      const responseData = await response.text();
-      alert(`Appointment successfully booked! ID: ${responseData.id}`);
-      setIsModalOpen(false); // Close the modal after successful booking
-    } catch (error) {
-      console.error("Booking error:", error);
-      alert("Failed to book the appointment. Please try again later.");
-    }
+      const session = await response.json();
+      const sessionId = session.id;
+      const { error } = await stripe.redirectToCheckout({ sessionId });
+      if (error) {
+        console.error("Stripe Checkout error:", error.message);
+      }
   };
   
 
