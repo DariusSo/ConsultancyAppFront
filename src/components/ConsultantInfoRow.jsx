@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Import date picker styles
+import { getCookie } from "../modules/Cookies";
 
 const ConsultantInfoRow = ({ consultant }) => {
   const {
@@ -13,17 +14,92 @@ const ConsultantInfoRow = ({ consultant }) => {
     hourlyRate,
     email,
     description,
+    availableTime, // JSON string of available times
   } = consultant;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null); // State for the selected date
+  const [selectedDate, setSelectedDate] = useState(null); // Stores the selected date and time
+  const [availableDates, setAvailableDates] = useState([]); // Stores the available dates
+  const [timeSlotsByDate, setTimeSlotsByDate] = useState({}); // Stores times grouped by date
 
-  const handleBooking = () => {
-    if (!selectedDate) return;
+  // Parse availableTime into usable data when the modal opens
+  useEffect(() => {
+    if (!availableTime) return;
 
-    // Placeholder for booking logic
-    alert(`Booked ${firstName} ${lastName} on ${selectedDate.toDateString()}`);
-    setIsModalOpen(false);
+    try {
+      const parsedAvailableTime = JSON.parse(availableTime || "[]");
+      const dateMap = {};
+
+      parsedAvailableTime.forEach(({ date }) => {
+        const [datePart, timePart] = date.split(" ");
+        if (!dateMap[datePart]) dateMap[datePart] = [];
+        dateMap[datePart].push(new Date(`${datePart}T${timePart}`)); // Push exact time
+      });
+      console.log(selectedDate);
+      setAvailableDates(Object.keys(dateMap).map((date) => new Date(date)));
+      setTimeSlotsByDate(dateMap);
+    } catch (error) {
+      console.error("Error parsing available times:", error);
+    }
+  }, [availableTime]);
+
+  // Dynamically get the times for the selected date
+  const getAvailableTimes = () => {
+    if (!selectedDate) return [];
+    console.log(selectedDate);
+    const selectedDateKey = selectedDate.toLocaleDateString("en-CA");
+    console.log(selectedDateKey);
+    console.log(timeSlotsByDate);
+  
+    return timeSlotsByDate[selectedDateKey] || [];
+  };
+
+  // Handle booking confirmation
+  const handleBooking = async () => {
+    if (!selectedDate) {
+      alert("Please select a valid date and time before booking.");
+      return;
+    }
+  
+    try {
+      // Prepare the booking payload
+      const bookingPayload = {
+        title: "Consultation Appointment", // Adjust title dynamically if needed
+        description: "Discuss specific issues with the consultant.", // Optional description
+        category: consultant.categories, // Assuming `consultant` has a `category` field
+        consultantId: consultant.id, // Consultant's ID
+        timeAndDate: selectedDate.toISOString(), // Use ISO format for the date
+        price: consultant.hourlyRate, // Assuming `hourlyRate` is in the consultant object
+      };
+  
+      // Send the booking request to the backend
+      const response = await fetch("http://localhost:8080/appointments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getCookie("loggedIn")
+        },
+        body: JSON.stringify(bookingPayload),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to book the appointment.");
+      }
+  
+      const responseData = await response.text();
+      alert(`Appointment successfully booked! ID: ${responseData.id}`);
+      setIsModalOpen(false); // Close the modal after successful booking
+    } catch (error) {
+      console.error("Booking error:", error);
+      alert("Failed to book the appointment. Please try again later.");
+    }
+  };
+  
+
+  // Open modal and initialize data
+  const openModal = () => {
+    setIsModalOpen(true);
+    setSelectedDate(null); // Reset selection when opening modal
   };
 
   return (
@@ -63,7 +139,7 @@ const ConsultantInfoRow = ({ consultant }) => {
         {/* More Info Button */}
         <div>
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={openModal}
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
           >
             More Info
@@ -73,10 +149,7 @@ const ConsultantInfoRow = ({ consultant }) => {
 
       {/* Modal for More Info */}
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        {/* Modal Backdrop */}
         <div className="fixed inset-0 bg-black bg-opacity-25" />
-
-        {/* Modal Content */}
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <Dialog.Panel className="w-full max-w-lg bg-white rounded-lg p-6 shadow-lg">
             <Dialog.Title className="text-xl font-bold mb-4">{`${firstName} ${lastName}`}</Dialog.Title>
@@ -99,9 +172,13 @@ const ConsultantInfoRow = ({ consultant }) => {
               <DatePicker
                 selected={selectedDate}
                 onChange={(date) => setSelectedDate(date)}
+                includeDates={availableDates}
+                includeTimes={getAvailableTimes()}
                 showTimeSelect
+                timeIntervals={15} // Optional, to align with intervals
                 dateFormat="Pp"
                 placeholderText="Choose a date and time"
+                toggleCalendarOnIconClick
                 className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
