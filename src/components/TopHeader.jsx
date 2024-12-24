@@ -26,7 +26,7 @@ const TopHeader = () => {
       <div className="flex items-center">
         {isLoggedIn && (
           <button
-            onClick={() => navigate("/consultant")}
+            onClick={() => navigate("/profile")}
             className="text-gray-700 hover:text-gray-900 mr-4"
             title="Profile"
           >

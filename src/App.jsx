@@ -10,7 +10,7 @@ import Banner from './components/Banner'
 import SearchBar from './components/SearchBar'
 import ConsultantCard from './components/ConsultantInfoRow'
 import HomePage from './pages/HomePage'
-import ConsultantProfilePage from './pages/ConsultantProfilePage'
+import ConsultantProfilePage from './pages/UserProfilePage'
 import { Outlet } from 'react-router-dom'
 
 function App() {

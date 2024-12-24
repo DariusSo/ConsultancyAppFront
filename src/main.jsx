@@ -4,9 +4,10 @@ import './index.css'
 import App from './App.jsx'
 import { createBrowserRouter, RouterProvider} from "react-router-dom"
 import HomePage from './pages/HomePage.jsx'
-import ConsultantProfilePage from './pages/ConsultantProfilePage.jsx'
+import ConsultantProfilePage from './pages/UserProfilePage.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Registration.jsx'
+import UserProfilePage from './pages/UserProfilePage.jsx'
 
 
 const router = createBrowserRouter([
@@ -19,8 +20,8 @@ const router = createBrowserRouter([
         element: <HomePage/>,
       },
       {
-        path: "/consultant",
-        element: <ConsultantProfilePage/>,
+        path: "/profile",
+        element: <UserProfilePage/>,
       },
     ],
   },
