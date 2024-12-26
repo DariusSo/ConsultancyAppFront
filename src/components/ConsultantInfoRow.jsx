@@ -69,12 +69,13 @@ const ConsultantInfoRow = ({ consultant }) => {
     }
   
       // Prepare the booking payload
+      const formattedDate = formatDateForBackend(selectedDate);
       const bookingPayload = {
         title: "Consultation Appointment", // Adjust title dynamically if needed
         description: "Discuss specific issues with the consultant.", // Optional description
         category: consultant.categories, // Assuming `consultant` has a `category` field
         consultantId: consultant.id, // Consultant's ID
-        timeAndDate: selectedDate.toISOString(), // Use ISO format for the date
+        timeAndDate: formattedDate,
         price: consultant.hourlyRate, // Assuming `hourlyRate` is in the consultant object
       };
   
@@ -91,7 +92,8 @@ const ConsultantInfoRow = ({ consultant }) => {
       if (!response.ok) {
         throw new Error("Failed to book the appointment.");
       }
-  
+      console.log("Selected Date:", selectedDate);
+      console.log("Converted to ISO:", new Date(selectedDate).toISOString());
       const session = await response.json();
       const sessionId = session.id;
       const { error } = await stripe.redirectToCheckout({ sessionId });
@@ -212,6 +214,19 @@ const ConsultantInfoRow = ({ consultant }) => {
       </Dialog>
     </>
   );
+};
+
+const formatDateForBackend = (date) => {
+  // Extract parts of the date and format with 'T' separator
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  // Combine into ISO 8601 format with 'T'
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 };
 
 export default ConsultantInfoRow;
