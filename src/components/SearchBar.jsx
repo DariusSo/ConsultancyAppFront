@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaSearch, FaDollarSign, FaCalendarAlt, FaList } from 'react-icons/fa';
+import ConsultantInfoRow from './ConsultantInfoRow';
 
 const SearchBar = () => {
   const [specialty, setSpecialty] = useState('');
@@ -16,38 +17,54 @@ const SearchBar = () => {
       console.error('Hourly Rate "From" should be less than or equal to "To".');
       return;
     }
-
+  
+    // Ensure the date is formatted as yyyy-MM-dd
+    const formattedDate = date ? new Date(date).toISOString().split('T')[0] : ''; // Extract only the date part
+    console.log(formattedDate);
+  
     // Construct the query string for the GET request
     const queryParams = new URLSearchParams({
       minPrice: hourlyRateFrom || 0, // Default to 0 if no input
       maxPrice: hourlyRateTo || Number.MAX_VALUE, // Default to a large number if no input
       speciality: specialty,
       category,
-      date,
+      date: formattedDate, // Send only the formatted date
     }).toString();
-
+  
+    console.log(`Query Params: ${queryParams}`); // Debugging
+  
     try {
       const response = await fetch(`http://localhost:8080/consultant/search?${queryParams}`, {
         method: 'GET',
       });
-
+  
       if (!response.ok) {
         throw new Error(`Failed to fetch results: ${response.status}`);
       }
-
+  
       const data = await response.json();
       setResults(data); // Update results state with the fetched data
     } catch (error) {
       console.error('Error fetching search results:', error);
     }
   };
+  
+  
+  
 
-  // Trigger API call only if values are not default
+  // Trigger API call only if values are not default or empty
   useEffect(() => {
-    if (
-      hasSearched && // Ensure the user has triggered a search
-      (specialty || category !== 'ALL' || date || hourlyRateFrom || hourlyRateTo) // Ensure some value is not default
-    ) {
+    const isAllDefault =
+      !specialty &&
+      category === 'ALL' &&
+      !date &&
+      !hourlyRateFrom &&
+      !hourlyRateTo;
+
+    if (isAllDefault) {
+      setResults([]); // Clear results if all fields are default or empty
+      setHasSearched(false); // Reset search status
+    } else if (hasSearched) {
       fetchResults();
     }
   }, [specialty, category, date, hourlyRateFrom, hourlyRateTo, hasSearched]);
@@ -143,9 +160,10 @@ const SearchBar = () => {
         <div className="mt-8">
           {hasSearched && results.length > 0 ? (
             <ul>
+              <h1>Search results</h1>
               {results.map((consultant, index) => (
                 <li key={index} className="border-b py-2">
-                  {consultant.name} - {consultant.speciality} - ${consultant.hourlyRate}/hour
+                  <ConsultantInfoRow key={consultant.id} consultant={consultant} />
                 </li>
               ))}
             </ul>
