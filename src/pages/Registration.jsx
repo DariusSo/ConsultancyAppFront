@@ -63,7 +63,7 @@ const Register = () => {
       formData.birthDate = birthDate;
     } else {
       formData.categories = categories;
-      formData.availableTime = JSON.stringify(availableTimes.filter(Boolean));
+      formData.availableTime;
       formData.speciality = speciality;
       formData.description = description;
       formData.hourlyRate = hourlyRate;
@@ -102,7 +102,6 @@ const Register = () => {
         setConfirmPassword('');
         setBirthDate('');
         setCategories('FINANCIAL');
-        setAvailableTimes(['']);
         setSpeciality('');
         setDescription('');
         setHourlyRate('');
@@ -257,30 +256,6 @@ const Register = () => {
                 <option value="BUSINESS">BUSINESS</option>
                 <option value="OTHER">OTHER</option>
               </select>
-            </div>
-
-            <div className="mb-4">
-              <label className="block mb-1 font-medium text-gray-700">Available Times</label>
-              {availableTimes.map((time, index) => (
-                <div key={index} className="mb-2">
-                  <input
-                    type="datetime-local"
-                    className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:border-blue-500"
-                    value={time}
-                    onChange={e => handleAvailableTimeChange(index, e.target.value)}
-                    required
-                    disabled={loading}
-                  />
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={handleAddAvailableTime}
-                className="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
-                disabled={loading}
-              >
-                + Add Another Available Time
-              </button>
             </div>
 
             <div className="mb-4">
