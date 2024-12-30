@@ -3,7 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { getCookie } from "../modules/Cookies";
 import { format } from "date-fns"; // Install date-fns for easier date formatting
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import ClientProfile from "../components/ClientProfile";
 
@@ -128,6 +128,14 @@ export default function ConsultantProfile({user, approvedConsultations, notAppro
             <div>
               <strong>Price:</strong> ${consultation.price.toFixed(2)}
             </div>
+            <Link to={'/room/' + consultation.roomUuid}>
+              <button
+                onClick={() => handleApproveConsultation(consultation)}
+                className="mt-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+              >
+                Connect
+              </button>
+            </Link>
           </li>
         ))}
       </ul>
@@ -157,11 +165,11 @@ export default function ConsultantProfile({user, approvedConsultations, notAppro
             <strong>Price:</strong> ${consultation.price.toFixed(2)}
           </div>
           <button
-  onClick={() => handleApproveConsultation(consultation)}
-  className="mt-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
->
-  Approve
-</button>
+            onClick={() => handleApproveConsultation(consultation)}
+            className="mt-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+          >
+            Approve
+          </button>
 
         </li>
       ))}
