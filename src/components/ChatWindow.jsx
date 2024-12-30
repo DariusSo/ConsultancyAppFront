@@ -1,19 +1,19 @@
-import { Stomp } from '@stomp/stompjs';
-import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import SockJS from 'sockjs-client/dist/sockjs.min.js';
-import { getCookie } from '../modules/Cookies';
+import { Stomp } from "@stomp/stompjs";
+import React, { useEffect, useImperativeHandle, useRef, useState, forwardRef } from "react";
+import { useParams } from "react-router-dom";
+import SockJS from "sockjs-client/dist/sockjs.min.js";
+import { getCookie } from "../modules/Cookies";
 
-const ChatWindow = () => {
+const ChatWindow = forwardRef((props, ref) => {
   const params = useParams();
   const roomUuid = params.id;
 
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const [name, setName] = useState('');
+  const [input, setInput] = useState("");
+  const [name, setName] = useState("");
   const stompClientRef = useRef(null);
   const subscriptionRef = useRef(null);
-  const nameRef = useRef('');
+  const nameRef = useRef("");
 
   useEffect(() => {
     const fetchName = async () => {
@@ -21,85 +21,67 @@ const ChatWindow = () => {
         const user = await getName();
         setName(user.firstName);
         nameRef.current = user.firstName;
-        console.log(user.firstName);
       } catch (error) {
-        console.error('Error fetching user name:', error);
+        console.error("Error fetching user name:", error);
       }
     };
 
     fetchName();
   }, []);
 
-  useEffect(() => {
-    const socket = new SockJS('http://localhost:8080/websocket');
+  const connect = () => {
+    const socket = new SockJS("http://localhost:8080/websocket");
     const stompClient = Stomp.over(socket);
 
     stompClient.connect({}, (frame) => {
-      console.log('Connected: ' + frame);
-
-      if (!subscriptionRef.current) {
-        subscriptionRef.current = stompClient.subscribe(`/topic/consultation/${roomUuid}`, (message) => {
-          const receivedMessage = JSON.parse(message.body);
-
-          if (receivedMessage.name !== nameRef.current) {
-            setMessages((prev) => [
-              ...prev,
-              {
-                name: receivedMessage.name,
-                message: receivedMessage.message,
-                sentAt: receivedMessage.sentAt,
-                messageType: receivedMessage.messageType,
-              },
-            ]);
+      console.log("Connected:", frame);
+      stompClient.subscribe(`/topic/consultation/${roomUuid}`,(message) => {
+            const receivedMessage = JSON.parse(message.body);
+            if (receivedMessage.name !== nameRef.current) {
+              setMessages((prev) => [
+                ...prev,
+                {
+                  name: receivedMessage.name,
+                  message: receivedMessage.message,
+                  sentAt: receivedMessage.sentAt,
+                  messageType: receivedMessage.messageType,
+                },
+              ]);
+            }
           }
-        });
-      }
-
+        );
       stompClientRef.current = stompClient;
     });
+  };
 
-    return () => {
-      if (stompClientRef.current) {
-        stompClientRef.current.disconnect(() => console.log('Disconnected'));
-      }
-      if (subscriptionRef.current) {
-        subscriptionRef.current.unsubscribe();
-        subscriptionRef.current = null;
-      }
-    };
-  }, [roomUuid]);
+  // Expose the connect function to the parent
+  useImperativeHandle(ref, () => connect);
 
   const sendMessage = (newMessage) => {
     const stompClient = stompClientRef.current;
-
-    if (stompClient && stompClient.connected) {
-      const chatMessage = {
-        name,
-        message: newMessage,
-        sentAt: new Date().toISOString(),
-        messageType: 'USER',
-      };
-
-      stompClient.send(`/app/consultation/${roomUuid}`, {}, JSON.stringify(chatMessage));
-    } else {
-      console.error('Cannot send message: WebSocket is not connected.');
-    }
+    const chatMessage = {
+      name,
+      message: newMessage,
+      sentAt: new Date().toISOString(),
+      messageType: "USER",
+    };
+    stompClient.send(`/app/consultation/${roomUuid}`, {}, JSON.stringify(chatMessage));
   };
 
   const handleSend = () => {
-    if (input.trim() === '') return;
+    if (input.trim() === "") return;
 
     setMessages((prev) => [
       ...prev,
       {
-        name: 'You',
+        name: "You",
         message: input,
         sentAt: new Date().toISOString(),
-        messageType: 'USER',
+        messageType: "USER",
       },
     ]);
     sendMessage(input);
-    setInput('');
+    setInput("");
   };
 
   return (
@@ -109,14 +91,12 @@ const ChatWindow = () => {
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`mb-2 flex ${msg.name === 'You' ? 'justify-end' : 'justify-start'}`}
+            className={`mb-2 flex ${msg.name === "You" ? "justify-end" : "justify-start"}`}
           >
             <div className="max-w-xs p-3 rounded-lg bg-white shadow-md">
               <p className="font-bold">{msg.name}</p>
               <p>{msg.message}</p>
-              <p className="text-xs text-gray-500">
-                {new Date(msg.sentAt).toLocaleString()}
-              </p>
+              <p className="text-xs text-gray-500">{new Date(msg.sentAt).toLocaleString()}</p>
             </div>
           </div>
         ))}
@@ -138,17 +118,18 @@ const ChatWindow = () => {
       </div>
     </div>
   );
-};
+});
 
+// Helper function to fetch user name
 async function getName() {
-  const token = getCookie('loggedIn');
-  const apiUrl = 'http://localhost:8080/auth/profile';
+  const token = getCookie("loggedIn");
+  const apiUrl = "http://localhost:8080/auth/profile";
 
   try {
     const response = await fetch(apiUrl, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: token,
       },
     });
@@ -159,7 +140,7 @@ async function getName() {
       throw new Error(`HTTP error: ${response.status}`);
     }
   } catch (error) {
-    console.error('Error fetching user:', error);
+    console.error("Error fetching user:", error);
     throw error;
   }
 }

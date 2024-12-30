@@ -1,46 +1,60 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ChatWindow from "../components/ChatWindow";
-import { getCookie } from "../modules/Cookies"; // Assuming you have a getCookie function
+import { getCookie } from "../modules/Cookies";
+import VideoChat from "../components/VideoChat";
 
 export default function ConsultationRoom() {
   const params = useParams();
   const navigate = useNavigate();
   const roomUuid = params.id;
+  const connectToChatRef = useRef(null);
+  const connectToVideoRef = useRef(null);
 
   useEffect(() => {
     const authenticateUser = async () => {
       try {
-        const jwtToken = getCookie("loggedIn"); // Replace with your method of retrieving the token
-        const response = await fetch(`http://localhost:8080/auth/consultationRoom?roomUuid=${roomUuid}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: jwtToken,
-          },
-        });
+        const jwtToken = getCookie("loggedIn");
+        const response = await fetch(
+          `http://localhost:8080/auth/consultationRoom?roomUuid=${roomUuid}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: jwtToken,
+            },
+          }
+        );
 
         if (!response.ok) {
-          if (response.status === 401) {
-            console.error("Unauthorized access");
-            navigate("/login"); // Redirect to login page
-          } else {
-            console.error("Authentication failed with status:", response.status);
-          }
+          console.error("Authentication failed:", response.status);
           navigate("/login");
         }
       } catch (error) {
         console.error("Error authenticating user:", error);
-        navigate("/login"); // Redirect to login on any error
+        navigate("/login");
       }
     };
 
     authenticateUser();
   }, [roomUuid, navigate]);
 
+  const handleParentButtonClick = () => {
+    if (connectToChatRef.current) {
+      connectToChatRef.current();
+    }
+    if (connectToVideoRef.current) {
+      connectToVideoRef.current.connect(); // Correctly call the exposed `connect` function
+    }
+  };
+
   return (
     <>
-      <ChatWindow roomUuid={roomUuid} />
+      <VideoChat ref={connectToVideoRef} />
+      <ChatWindow ref={connectToChatRef} />
+      <button type="button" onClick={handleParentButtonClick}>
+        Connect to Chat and Video
+      </button>
     </>
   );
 }
