@@ -1,4 +1,5 @@
 export default function ClientProfile({user, approvedConsultations, notApprovedConsultations}){
+  
     return ( <div className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Left Section: Consultant Info */}
           <div className="bg-white rounded-lg shadow p-6">
@@ -34,8 +35,20 @@ export default function ClientProfile({user, approvedConsultations, notApprovedC
                 <ul className="mt-2">
                   {approvedConsultations.map((consultation, index) => (
                     <li key={index} className="border-b border-gray-200 py-2">
-                      
-                    </li>
+                    <div>
+                      <strong>Title:</strong> {consultation.title}
+                    </div>
+                    <div>
+                      <strong>Description:</strong> {consultation.description}
+                    </div>
+                    <div>
+                      <strong>Date & Time:</strong>{" "}
+                      {new Date(consultation.timeAndDate).toLocaleString()}
+                    </div>
+                    <div>
+                      <strong>Price:</strong> ${consultation.price.toFixed(2)}
+                    </div>
+                  </li>
                   ))}
                 </ul>
               ) : (
@@ -49,8 +62,20 @@ export default function ClientProfile({user, approvedConsultations, notApprovedC
                 <ul className="mt-2">
                   {notApprovedConsultations.map((consultation, index) => (
                     <li key={index} className="border-b border-gray-200 py-2">
-                      
-                    </li>
+                    <div>
+                      <strong>Title:</strong> {consultation.title}
+                    </div>
+                    <div>
+                      <strong>Description:</strong> {consultation.description}
+                    </div>
+                    <div>
+                      <strong>Date & Time:</strong>{" "}
+                      {new Date(consultation.timeAndDate).toLocaleString()}
+                    </div>
+                    <div>
+                      <strong>Price:</strong> ${consultation.price.toFixed(2)}
+                    </div>
+                  </li>
                   ))}
                 </ul>
               ) : (

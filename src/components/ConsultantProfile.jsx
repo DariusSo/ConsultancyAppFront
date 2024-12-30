@@ -7,8 +7,8 @@ import { Navigate } from "react-router-dom";
 
 import ClientProfile from "../components/ClientProfile";
 
-export default function ConsultantProfile({user, approvedConsultations, notApprovedConsultations, availableTimes, setAvailableTimes, newAvailableTime, setNewAvailableTime}){
-  console.log(approvedConsultations);
+export default function ConsultantProfile({user, approvedConsultations, notApprovedConsultations, availableTimes, setAvailableTimes, newAvailableTime, setNewAvailableTime, setApprovedConsultations, setNotApprovedConsultations}){
+  console.log("Props:", { setApprovedConsultations, setNotApprovedConsultations });
   const handleAddAvailableTime = async () => {
       if (newAvailableTime) {
         const formattedDate = format(newAvailableTime, "yyyy-MM-dd HH:mm");
@@ -44,6 +44,34 @@ export default function ConsultantProfile({user, approvedConsultations, notAppro
         console.error("Failed to update dates:", err);
       }
     }
+
+    const handleApproveConsultation = async (consultation) => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/appointments?appointmentId=${consultation.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: getCookie("loggedIn"),
+            },
+          }
+        );
+    
+        if (response.ok) {
+          // Move the consultation to the approved list
+          setApprovedConsultations((prevApproved) => [...prevApproved, consultation]);
+          setNotApprovedConsultations((prevNotApproved) =>
+            prevNotApproved.filter((c) => c.id !== consultation.id)
+          );
+        } else {
+          console.error("Failed to approve consultation:", await response.text());
+        }
+      } catch (err) {
+        console.error("Error approving consultation:", err);
+      }
+    };
+    
   
   
   return (
@@ -110,31 +138,38 @@ export default function ConsultantProfile({user, approvedConsultations, notAppro
 
   {/* Not Approved Consultations */}
   <div>
-    <h3 className="text-md font-semibold text-red-600">Not Approved</h3>
-    {notApprovedConsultations.length > 0 ? (
-      <ul className="mt-2">
-        {notApprovedConsultations.map((consultation, index) => (
-          <li key={index} className="border-b border-gray-200 py-2">
-            <div>
-              <strong>Title:</strong> {consultation.title}
-            </div>
-            <div>
-              <strong>Description:</strong> {consultation.description}
-            </div>
-            <div>
-              <strong>Date & Time:</strong>{" "}
-              {new Date(consultation.timeAndDate).toLocaleString()}
-            </div>
-            <div>
-              <strong>Price:</strong> ${consultation.price.toFixed(2)}
-            </div>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p className="text-gray-500 mt-2">No pending consultations.</p>
-    )}
-  </div>
+  <h3 className="text-md font-semibold text-red-600">Not Approved</h3>
+  {notApprovedConsultations.length > 0 ? (
+    <ul className="mt-2">
+      {notApprovedConsultations.map((consultation, index) => (
+        <li key={index} className="border-b border-gray-200 py-2">
+          <div>
+            <strong>Title:</strong> {consultation.title}
+          </div>
+          <div>
+            <strong>Description:</strong> {consultation.description}
+          </div>
+          <div>
+            <strong>Date & Time:</strong>{" "}
+            {new Date(consultation.timeAndDate).toLocaleString()}
+          </div>
+          <div>
+            <strong>Price:</strong> ${consultation.price.toFixed(2)}
+          </div>
+          <button
+  onClick={() => handleApproveConsultation(consultation)}
+  className="mt-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+>
+  Approve
+</button>
+
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p className="text-gray-500 mt-2">No pending consultations.</p>
+  )}
+</div>
 </div>
 
 

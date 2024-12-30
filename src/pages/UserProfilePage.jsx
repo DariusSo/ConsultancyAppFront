@@ -44,6 +44,8 @@ const UserProfilePage = () => {
                                                   setAvailableTimes={setAvailableTimes}
                                                   newAvailableTime={newAvailableTime}
                                                   setNewAvailableTime={setNewAvailableTime}
+                                                  setApprovedConsultations={setApprovedConsultations}
+                                                  setNotApprovedConsultations={setNotApprovedConsultations}
                                 />
                               ) : (<ClientProfile user={user} 
                                                   approvedConsultations={approvedConsultations}

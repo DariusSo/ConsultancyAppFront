@@ -8,6 +8,7 @@ import ConsultantProfilePage from './pages/UserProfilePage.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Registration.jsx'
 import UserProfilePage from './pages/UserProfilePage.jsx'
+import ChatWindow from './components/ChatWindow.jsx'
 
 
 const router = createBrowserRouter([
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
   {
     path: "/registration",
     element: <Register/>,
+  },
+  {
+    path: "/chat",
+    element: <ChatWindow/>,
   },
   
 ]);

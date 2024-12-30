@@ -36,7 +36,6 @@ const ConsultantInfoRow = ({ consultant }) => {
         if (!dateMap[datePart]) dateMap[datePart] = [];
         dateMap[datePart].push(new Date(`${datePart}T${timePart}`)); // Push exact time
       });
-      console.log(selectedDate);
       setAvailableDates(Object.keys(dateMap).map((date) => new Date(date)));
       setTimeSlotsByDate(dateMap);
     } catch (error) {
