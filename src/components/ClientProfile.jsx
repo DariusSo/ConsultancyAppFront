@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function ClientProfile({user, approvedConsultations, notApprovedConsultations}){
   
     return ( <div className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -48,6 +50,14 @@ export default function ClientProfile({user, approvedConsultations, notApprovedC
                     <div>
                       <strong>Price:</strong> ${consultation.price.toFixed(2)}
                     </div>
+                    <Link to={'/room/' + consultation.roomUuid}>
+                    <button
+                      onClick={() => handleApproveConsultation(consultation)}
+                      className="mt-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+                    >
+                      Connect
+                    </button>
+                  </Link>
                   </li>
                   ))}
                 </ul>

@@ -40,7 +40,7 @@ export default function ConsultationRoom() {
 
   return (
     <>
-      <ChatWindow />
+      <ChatWindow roomUuid={roomUuid} />
     </>
   );
 }

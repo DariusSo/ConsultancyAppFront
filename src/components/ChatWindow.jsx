@@ -1,22 +1,109 @@
-// ChatWindow.js
-import React, { useState } from 'react';
+import { Stomp } from '@stomp/stompjs';
+import React, { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import SockJS from 'sockjs-client/dist/sockjs.min.js';
+import { getCookie } from '../modules/Cookies';
 
 const ChatWindow = () => {
-  const [messages, setMessages] = useState([
-    { sender: 'bot', text: 'Hello! How can I assist you today?' },
-  ]);
+  const params = useParams();
+  const roomUuid = params.id;
+
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
+  const [name, setName] = useState('');
+  const stompClientRef = useRef(null);
+  const subscriptionRef = useRef(null);
+  const nameRef = useRef(''); // Ref to store the name
+
+  // Fetch the user's name when the component mounts
+  useEffect(() => {
+    const fetchName = async () => {
+      try {
+        const user = await getName();
+        setName(user.firstName);
+        nameRef.current = user.firstName; // Store in ref
+        console.log(user.firstName);
+      } catch (error) {
+        console.error('Error fetching user name:', error);
+      }
+    };
+
+    fetchName();
+  }, []);
+
+  useEffect(() => {
+    const socket = new SockJS('http://localhost:8080/websocket');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, (frame) => {
+      console.log('Connected: ' + frame);
+
+      if (!subscriptionRef.current) {
+        subscriptionRef.current = stompClient.subscribe(`/topic/consultation/${roomUuid}`, (message) => {
+          const receivedMessage = JSON.parse(message.body);
+          console.log('Received name:', receivedMessage.name);
+          console.log('Current user name:', nameRef.current);
+
+          // Compare using the name stored in the ref
+          if (receivedMessage.name !== nameRef.current) {
+            setMessages((prev) => [
+              ...prev,
+              {
+                name: receivedMessage.name,
+                message: receivedMessage.message,
+                sentAt: receivedMessage.sentAt,
+                messageType: receivedMessage.messageType,
+              },
+            ]);
+          }
+        });
+      }
+
+      stompClientRef.current = stompClient;
+    });
+
+    return () => {
+      if (stompClientRef.current) {
+        stompClientRef.current.disconnect(() => console.log('Disconnected'));
+      }
+      if (subscriptionRef.current) {
+        subscriptionRef.current.unsubscribe();
+        subscriptionRef.current = null;
+      }
+    };
+  }, [roomUuid]);
+
+  const sendMessage = (newMessage) => {
+    const stompClient = stompClientRef.current;
+
+    if (stompClient && stompClient.connected) {
+      const chatMessage = {
+        name,
+        message: newMessage,
+        sentAt: new Date().toISOString(),
+        messageType: 'USER',
+      };
+
+      stompClient.send(`/app/consultation/${roomUuid}`, {}, JSON.stringify(chatMessage));
+    } else {
+      console.error('Cannot send message: WebSocket is not connected.');
+    }
+  };
 
   const handleSend = () => {
     if (input.trim() === '') return;
 
-    setMessages((prev) => [...prev, { sender: 'user', text: input }]);
+    setMessages((prev) => [
+      ...prev,
+      {
+        name: 'You',
+        message: input,
+        sentAt: new Date().toISOString(),
+        messageType: 'USER',
+      },
+    ]);
+    sendMessage(input);
     setInput('');
-
-    // Simulating bot response
-    setTimeout(() => {
-      setMessages((prev) => [...prev, { sender: 'bot', text: 'Thank you for your message!' }]);
-    }, 1000);
   };
 
   return (
@@ -29,14 +116,14 @@ const ChatWindow = () => {
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`mb-2 flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+            className={`mb-2 flex ${msg.name === 'You' ? 'justify-end' : 'justify-start'}`}
           >
-            <div
-              className={`max-w-xs p-3 rounded-lg text-white ${
-                msg.sender === 'user' ? 'bg-blue-500' : 'bg-gray-400'
-              }`}
-            >
-              {msg.text}
+            <div className="max-w-xs p-3 rounded-lg bg-white shadow-md">
+              <p className="font-bold">{msg.name}</p>
+              <p>{msg.message}</p>
+              <p className="text-xs text-gray-500">
+                {new Date(msg.sentAt).toLocaleString()}
+              </p>
             </div>
           </div>
         ))}
@@ -62,19 +149,29 @@ const ChatWindow = () => {
   );
 };
 
-var stompClient = null;
-function connect(setIsConnected, name, chatWindowRef, users, setUsers, usr, setMessages, messages, msg, hasResponded, setHasResponded) {
-  var socket = new SockJS('http://localhost:8080/websocket');
-    
-  stompClient = Stomp.over(socket);
-  stompClient.connect({}, function (frame) {
-        
-  console.log('Connected: ' + frame);
+// Fetch the user's name using the JWT token
+async function getName() {
+  const token = getCookie('loggedIn');
+  const apiUrl = 'http://localhost:8080/auth/profile';
 
-    stompClient.subscribe('/topic/consultation/', function (messageList) {
-      
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
     });
-});
+
+    if (response.ok) {
+      return await response.json();
+    } else {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    throw error;
+  }
 }
 
 export default ChatWindow;
