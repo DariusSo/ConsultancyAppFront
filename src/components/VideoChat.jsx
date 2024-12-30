@@ -95,7 +95,7 @@ const VideoChat = forwardRef((props, ref) => {
               {
                 urls: "turn:109.199.113.183:3478", // Replace with your TURN server URL
                 username: "root", // Replace with your TURN server username
-                credential: "Priview1234", // Replace with your TURN server password
+                credential: "", // Replace with your TURN server password
               },
             ],
             iceTransportPolicy: "relay", // Force TURN-only connections
