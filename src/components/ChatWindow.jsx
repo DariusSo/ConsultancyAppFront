@@ -13,15 +13,14 @@ const ChatWindow = () => {
   const [name, setName] = useState('');
   const stompClientRef = useRef(null);
   const subscriptionRef = useRef(null);
-  const nameRef = useRef(''); // Ref to store the name
+  const nameRef = useRef('');
 
-  // Fetch the user's name when the component mounts
   useEffect(() => {
     const fetchName = async () => {
       try {
         const user = await getName();
         setName(user.firstName);
-        nameRef.current = user.firstName; // Store in ref
+        nameRef.current = user.firstName;
         console.log(user.firstName);
       } catch (error) {
         console.error('Error fetching user name:', error);
@@ -41,10 +40,7 @@ const ChatWindow = () => {
       if (!subscriptionRef.current) {
         subscriptionRef.current = stompClient.subscribe(`/topic/consultation/${roomUuid}`, (message) => {
           const receivedMessage = JSON.parse(message.body);
-          console.log('Received name:', receivedMessage.name);
-          console.log('Current user name:', nameRef.current);
 
-          // Compare using the name stored in the ref
           if (receivedMessage.name !== nameRef.current) {
             setMessages((prev) => [
               ...prev,
@@ -108,10 +104,7 @@ const ChatWindow = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
-      {/* Header */}
       <div className="p-4 bg-blue-600 text-white text-lg font-semibold">Chat with Consultant</div>
-
-      {/* Chat Messages */}
       <div className="flex-1 p-4 overflow-y-auto">
         {messages.map((msg, index) => (
           <div
@@ -128,8 +121,6 @@ const ChatWindow = () => {
           </div>
         ))}
       </div>
-
-      {/* Input Box */}
       <div className="p-4 bg-white flex items-center border-t">
         <input
           type="text"
@@ -149,7 +140,6 @@ const ChatWindow = () => {
   );
 };
 
-// Fetch the user's name using the JWT token
 async function getName() {
   const token = getCookie('loggedIn');
   const apiUrl = 'http://localhost:8080/auth/profile';
