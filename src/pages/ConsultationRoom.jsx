@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import ChatWindow from "../components/ChatWindow";
 import { getCookie } from "../modules/Cookies";
 import VideoChat from "../components/VideoChat";
+import TopHeader from "../components/TopHeader";
 
 export default function ConsultationRoom() {
   const params = useParams();
@@ -50,6 +51,7 @@ export default function ConsultationRoom() {
 
   return (
     <>
+      <TopHeader/>
       <VideoChat ref={connectToVideoRef} />
       <ChatWindow ref={connectToChatRef} />
       <button type="button" onClick={handleParentButtonClick}>

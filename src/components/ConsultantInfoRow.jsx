@@ -103,9 +103,39 @@ const ConsultantInfoRow = ({ consultant }) => {
   
 
   // Open modal and initialize data
-  const openModal = () => {
-    setIsModalOpen(true);
-    setSelectedDate(null); // Reset selection when opening modal
+  const openModal = async () => {
+    try {
+      setIsModalOpen(true);
+      setSelectedDate(null); // Reset the selected date when opening the modal
+  
+      // Fetch available dates and times from the API
+      const response = await fetch("http://localhost:8080/consultant/dates?id=" + consultant.id, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getCookie("loggedIn"),
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to fetch available dates.");
+      }
+  
+      const availableTimesFromApi = await response.json();
+  
+      // Parse the response into a usable format
+      const dateMap = {};
+      availableTimesFromApi.forEach(({ date }) => {
+        const [datePart, timePart] = date.split(" ");
+        if (!dateMap[datePart]) dateMap[datePart] = [];
+        dateMap[datePart].push(`${datePart}T${timePart}`);
+      });
+  
+      setAvailableDates(Object.keys(dateMap).map((date) => new Date(date)));
+      setTimeSlotsByDate(dateMap);
+    } catch (error) {
+      console.error("Error fetching available dates:", error);
+    }
   };
 
   return (

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import TopHeader from '../components/TopHeader';
 
 const Register = () => {
   const [role, setRole] = useState('CLIENT'); // 'CLIENT' or 'CONSULTANT'
@@ -117,6 +118,8 @@ const Register = () => {
   };
 
   return (
+    <>
+    <TopHeader/>
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <form 
         onSubmit={handleRegister} 
@@ -314,6 +317,8 @@ const Register = () => {
         )}
       </form>
     </div>
+    </>
+    
   );
 };
 

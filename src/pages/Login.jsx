@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import setCookie from '../modules/Cookies';
+import TopHeader from '../components/TopHeader';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -60,7 +61,9 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <>
+      <TopHeader/>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <form
         onSubmit={handleLogin}
         className="w-full max-w-sm bg-white p-6 rounded shadow-md"
@@ -146,6 +149,7 @@ const Login = () => {
         )}
       </form>
     </div>
+    </>
   );
 };
 
