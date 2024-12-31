@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 export default function ClientProfile({user, approvedConsultations, notApprovedConsultations}){
-  
+  console.log("Props:", { approvedConsultations, notApprovedConsultations });
     return ( <div className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Left Section: Consultant Info */}
           <div className="bg-white rounded-lg shadow p-6">

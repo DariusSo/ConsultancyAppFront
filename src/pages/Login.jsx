@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import setCookie from '../modules/Cookies';
 import TopHeader from '../components/TopHeader';
+import { Navigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -50,6 +51,7 @@ const Login = () => {
         setEmail('');
         setPassword('');
         setRole('CLIENT');
+        window.location.href = "/profile";
       }
     } catch (error) {
       setResponseType('error');

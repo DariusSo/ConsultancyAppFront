@@ -8,7 +8,7 @@ import { Link, Navigate } from "react-router-dom";
 import ClientProfile from "../components/ClientProfile";
 
 export default function ConsultantProfile({user, approvedConsultations, notApprovedConsultations, availableTimes, setAvailableTimes, newAvailableTime, setNewAvailableTime, setApprovedConsultations, setNotApprovedConsultations}){
-  console.log("Props:", { setApprovedConsultations, setNotApprovedConsultations });
+  console.log("Props:", { approvedConsultations, notApprovedConsultations });
   const handleAddAvailableTime = async () => {
       if (newAvailableTime) {
         const formattedDate = format(newAvailableTime, "yyyy-MM-dd HH:mm");
@@ -194,7 +194,7 @@ export default function ConsultantProfile({user, approvedConsultations, notAppro
             selected={newAvailableTime}
             onChange={(date) => setNewAvailableTime(date)}
             showTimeSelect
-            timeIntervals={30}
+            timeIntervals={60}
             dateFormat="Pp"
             placeholderText="Choose a date and time"
             className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"

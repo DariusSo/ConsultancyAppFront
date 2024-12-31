@@ -10,6 +10,8 @@ import Register from './pages/Registration.jsx'
 import UserProfilePage from './pages/UserProfilePage.jsx'
 import ChatWindow from './components/ChatWindow.jsx'
 import ConsultationRoom from './pages/ConsultationRoom.jsx'
+import ThankYouPage from './pages/ThankYouPage.jsx'
+import ErrorPage from './pages/ErrorPage.jsx'
 
 
 const router = createBrowserRouter([
@@ -42,6 +44,14 @@ const router = createBrowserRouter([
   {
     path: "/room/:id",
     element: <ConsultationRoom/>,
+  },
+  {
+    path: "/thanks",
+    element: <ThankYouPage/>,
+  },
+  {
+    path: "/error",
+    element: <ErrorPage/>,
   },
   
 ]);

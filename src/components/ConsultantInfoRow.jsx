@@ -18,8 +18,9 @@ const ConsultantInfoRow = ({ consultant }) => {
     availableTime, // JSON string of available times
   } = consultant;
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null); // Stores the selected date and time
+  const [isModalOpen, setIsModalOpen] = useState(false); // Booking modal
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false); // Authentication modal
+  const [selectedDate, setSelectedDate] = useState(null); // Selected date and time
   const [availableDates, setAvailableDates] = useState([]); // Stores the available dates
   const [timeSlotsByDate, setTimeSlotsByDate] = useState({}); // Stores times grouped by date
 
@@ -58,6 +59,12 @@ const ConsultantInfoRow = ({ consultant }) => {
   const handleBooking = async () => {
     if (!selectedDate) {
       alert("Please select a valid date and time before booking.");
+      return;
+    }
+
+    const authToken = getCookie("loggedIn");
+    if (!authToken) {
+      setIsAuthModalOpen(true); // Open authentication modal
       return;
     }
 
@@ -235,6 +242,41 @@ const ConsultantInfoRow = ({ consultant }) => {
             <button
               onClick={() => setIsModalOpen(false)}
               className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+            >
+              Close
+            </button>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+
+      {/* Authentication Modal */}
+      <Dialog open={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)}>
+        <div className="fixed inset-0 bg-black bg-opacity-25" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-md bg-white rounded-lg p-6 shadow-lg">
+            <Dialog.Title className="text-lg font-bold text-center mb-4">
+              Please Log In or Register
+            </Dialog.Title>
+            <p className="text-sm text-gray-600 text-center mb-6">
+              You need to log in or register to book an appointment.
+            </p>
+            <div className="flex justify-around">
+              <button
+                onClick={() => (window.location.href = "/login")}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+              >
+                Log In
+              </button>
+              <button
+                onClick={() => (window.location.href = "/registration")}
+                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+              >
+                Register
+              </button>
+            </div>
+            <button
+              onClick={() => setIsAuthModalOpen(false)}
+              className="mt-4 w-full bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition"
             >
               Close
             </button>

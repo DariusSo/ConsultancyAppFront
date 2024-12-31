@@ -94,18 +94,7 @@ const Register = () => {
         // Successful response (HTTP 200)
         setResponseType('success');
         setResponseMessage(text);
-        // Optionally clear the form here
-        setFirstName('');
-        setLastName('');
-        setEmail('');
-        setPhone('');
-        setPassword('');
-        setConfirmPassword('');
-        setBirthDate('');
-        setCategories('FINANCIAL');
-        setSpeciality('');
-        setDescription('');
-        setHourlyRate('');
+        window.location.href = "/login";
       }
     } catch (error) {
       // Network or unexpected error

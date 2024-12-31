@@ -30,8 +30,9 @@ const UserProfilePage = () => {
         console.error("Error during data fetching:", err);
       }
     };
-  
+    
     fetchAndProcessData();
+    console.log(notApprovedConsultations);
   }, []);
   
 
@@ -110,7 +111,7 @@ const processAppointments = (data, setApprovedConsultations, setNotApprovedConsu
       notApproved.push(appointment);
     }
   });
-
+  console.log("Not::::::::::::::::", notApproved);
   setApprovedConsultations(approved);
   setNotApprovedConsultations(notApproved);
 };
