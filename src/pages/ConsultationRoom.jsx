@@ -1,62 +1,101 @@
-import { useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import ChatWindow from "../components/ChatWindow";
-import { getCookie } from "../modules/Cookies";
+import React, { useState, useEffect, useRef } from "react";
 import VideoChat from "../components/VideoChat";
-import TopHeader from "../components/TopHeader";
+import ChatWindow from "../components/ChatWindow";
 
-export default function ConsultationRoom() {
-  const params = useParams();
-  const navigate = useNavigate();
-  const roomUuid = params.id;
-  const connectToChatRef = useRef(null);
-  const connectToVideoRef = useRef(null);
+function MainPage() {
+  const [isMobile, setIsMobile] = useState(false);
+  const [isConnected, setIsConnected] = useState(false); // Track connection state
+  const videoChatRef = useRef(null);
+  const chatRef = useRef(null);
 
-  useEffect(() => {
-    const authenticateUser = async () => {
-      try {
-        const jwtToken = getCookie("loggedIn");
-        const response = await fetch(
-          `http://localhost:8080/auth/consultationRoom?roomUuid=${roomUuid}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: jwtToken,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          console.error("Authentication failed:", response.status);
-          navigate("/login");
-        }
-      } catch (error) {
-        console.error("Error authenticating user:", error);
-        navigate("/login");
-      }
-    };
-
-    authenticateUser();
-  }, [roomUuid, navigate]);
-
-  const handleParentButtonClick = () => {
-    if (connectToChatRef.current) {
-      connectToChatRef.current();
-    }
-    if (connectToVideoRef.current) {
-      connectToVideoRef.current.connect(); // Correctly call the exposed `connect` function
+  const handleConnectToVideoAndChat = () => {
+    if (videoChatRef.current && chatRef.current) {
+      videoChatRef.current.connect(); // Connect to video chat
+      videoChatRef.current.startCall();
+      chatRef.current.connectToChat(); // Connect to chat
+      setIsConnected(true); // Update state to connected
+    } else {
+      console.error("VideoChat or ChatWindow ref is not available.");
     }
   };
 
+  const handleDisconnectVideoAndChat = () => {
+    if (videoChatRef.current && chatRef.current) {
+      videoChatRef.current.disconnect(); // Disconnect video chat
+      setIsConnected(false); // Update state to disconnected
+    } else {
+      console.error("VideoChat or ChatWindow ref is not available.");
+    }
+  };
+
+  // Detect screen size and update state
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 968); // Treat width <= 968px as mobile
+    };
+
+    handleResize(); // Initial check
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
-    <>
-      <TopHeader/>
-      <VideoChat ref={connectToVideoRef} />
-      <ChatWindow ref={connectToChatRef} />
-      <button type="button" onClick={handleParentButtonClick}>
-        Connect to Chat and Video
-      </button>
-    </>
+    <div className="bg-gradient-to-b from-[#232529] to-[#2E2F33] text-gray-200 font-sans relative">
+      {/* Layout for PC */}
+      {!isMobile ? (
+        <div className="flex h-[calc(100vh-4rem)]">
+          {/* Video Section */}
+          <div className="flex-1 p-4">
+            <VideoChat ref={videoChatRef} />
+          </div>
+
+          {/* Chat Section */}
+          <div className="w-1/3 p-4 border-l border-gray-700">
+            <ChatWindow ref={chatRef} />
+          </div>
+        </div>
+      ) : (
+        /* Layout for Mobile */
+        <>
+          <div className="flex h-[calc(100vh-4rem)]">
+            {/* Video Section */}
+            <div className="flex-1 p-4">
+              <VideoChat ref={videoChatRef} />
+            </div>
+          </div>
+
+          <div className="flex h-[calc(100vh-4rem)]">
+            {/* Chat Section */}
+            <div className="flex-1 p-4 border-t border-gray-700">
+              <ChatWindow ref={chatRef} />
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Sticky Connect/Disconnect Button */}
+      <div className="sticky bottom-0 w-full text-center py-5 transition">
+        {isConnected ? (
+          <button
+            onClick={handleDisconnectVideoAndChat}
+            className="w-full text-lg font-semibold bg-red-600 hover:bg-red-700 text-white py-3 rounded-none"
+          >
+            Disconnect
+          </button>
+        ) : (
+          <button
+            onClick={handleConnectToVideoAndChat}
+            className="w-full text-lg font-semibold bg-green-600 hover:bg-green-700 text-white py-3 rounded-none"
+          >
+            Connect to Video and Chat
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
+
+export default MainPage;

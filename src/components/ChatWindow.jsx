@@ -35,27 +35,28 @@ const ChatWindow = forwardRef((props, ref) => {
 
     stompClient.connect({}, (frame) => {
       console.log("Connected:", frame);
-      stompClient.subscribe(`/topic/consultation/${roomUuid}`,(message) => {
-            const receivedMessage = JSON.parse(message.body);
-            if (receivedMessage.name !== nameRef.current) {
-              setMessages((prev) => [
-                ...prev,
-                {
-                  name: receivedMessage.name,
-                  message: receivedMessage.message,
-                  sentAt: receivedMessage.sentAt,
-                  messageType: receivedMessage.messageType,
-                },
-              ]);
-            }
-          }
-        );
+      stompClient.subscribe(`/topic/consultation/${roomUuid}`, (message) => {
+        const receivedMessage = JSON.parse(message.body);
+        if (receivedMessage.name !== nameRef.current) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              name: receivedMessage.name,
+              message: receivedMessage.message,
+              sentAt: receivedMessage.sentAt,
+              messageType: receivedMessage.messageType,
+            },
+          ]);
+        }
+      });
       stompClientRef.current = stompClient;
     });
   };
 
   // Expose the connect function to the parent
-  useImperativeHandle(ref, () => connect);
+  useImperativeHandle(ref, () => ({
+      connectToChat: connect,
+    }));
 
   const sendMessage = (newMessage) => {
     const stompClient = stompClientRef.current;
@@ -85,39 +86,64 @@ const ChatWindow = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
-      <div className="p-4 bg-blue-600 text-white text-lg font-semibold">Chat with Consultant</div>
-      <div className="flex-1 p-4 overflow-y-auto">
+    <div
+      className="
+        w-full
+        h-full
+        flex flex-col
+        bg-[#2F3136]
+        border-t md:border-t-0 md:border-l border-gray-700
+      "
+    >
+      {/* Top Bar */}
+      <div className="p-3 bg-[#34373C] text-lg font-semibold border-b border-gray-700">
+        Chat with Consultant
+      </div>
+  
+      {/* Chat Message List */}
+      <div className="flex-1 p-3 overflow-y-auto">
         {messages.map((msg, index) => (
           <div
             key={index}
             className={`mb-2 flex ${msg.name === "You" ? "justify-end" : "justify-start"}`}
           >
-            <div className="max-w-xs p-3 rounded-lg bg-white shadow-md">
+            {/* Message Bubble */}
+            <div className="max-w-xs p-3 rounded-lg bg-[#3A3C40] shadow-md">
               <p className="font-bold">{msg.name}</p>
               <p>{msg.message}</p>
-              <p className="text-xs text-gray-500">{new Date(msg.sentAt).toLocaleString()}</p>
+              <p className="text-xs text-gray-400 mt-1">
+                {new Date(msg.sentAt).toLocaleString()}
+              </p>
             </div>
           </div>
         ))}
       </div>
-      <div className="p-4 bg-white flex items-center border-t">
+  
+      {/* Input Area */}
+      <div className="p-3 flex items-center bg-[#34373C] border-t border-gray-700">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="
+            flex-1
+            px-4 py-2 border border-gray-600 rounded-lg
+            focus:outline-none focus:ring-2 focus:ring-[#E0E0E0]
+            bg-[#3A3C40] text-gray-200 placeholder-gray-400
+          "
           placeholder="Type your message..."
         />
         <button
           onClick={handleSend}
-          className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="ml-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
         >
           Send
         </button>
       </div>
     </div>
   );
+  
+  
 });
 
 // Helper function to fetch user name

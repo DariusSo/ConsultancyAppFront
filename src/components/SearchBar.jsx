@@ -1,58 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { FaSearch, FaDollarSign, FaCalendarAlt, FaList } from 'react-icons/fa';
+import { FaDollarSign, FaCalendarAlt, FaList } from 'react-icons/fa';
 import ConsultantInfoRow from './ConsultantInfoRow';
 
 const SearchBar = () => {
   const [specialty, setSpecialty] = useState('');
-  const [category, setCategory] = useState('ALL'); // Default category is "ALL"
+  const [category, setCategory] = useState('ALL');
   const [date, setDate] = useState('');
   const [hourlyRateFrom, setHourlyRateFrom] = useState('');
   const [hourlyRateTo, setHourlyRateTo] = useState('');
   const [results, setResults] = useState([]);
-  const [hasSearched, setHasSearched] = useState(false); // Tracks if a search has been made
+  const [hasSearched, setHasSearched] = useState(false);
 
   const fetchResults = async () => {
-    // Validate hourly rate inputs
     if (hourlyRateFrom && hourlyRateTo && Number(hourlyRateFrom) > Number(hourlyRateTo)) {
       console.error('Hourly Rate "From" should be less than or equal to "To".');
       return;
     }
-  
-    // Ensure the date is formatted as yyyy-MM-dd
-    const formattedDate = date ? new Date(date).toISOString().split('T')[0] : ''; // Extract only the date part
-    console.log(formattedDate);
-  
-    // Construct the query string for the GET request
+
+    const formattedDate = date ? new Date(date).toISOString().split('T')[0] : '';
     const queryParams = new URLSearchParams({
-      minPrice: hourlyRateFrom || 0, // Default to 0 if no input
-      maxPrice: hourlyRateTo || Number.MAX_VALUE, // Default to a large number if no input
+      minPrice: hourlyRateFrom || 0,
+      maxPrice: hourlyRateTo || Number.MAX_VALUE,
       speciality: specialty,
       category,
-      date: formattedDate, // Send only the formatted date
+      date: formattedDate,
     }).toString();
-  
-    console.log(`Query Params: ${queryParams}`); // Debugging
-  
+
     try {
-      const response = await fetch(`http://localhost:8080/consultant/search?${queryParams}`, {
-        method: 'GET',
-      });
-  
+      const response = await fetch(
+        `http://localhost:8080/consultant/search?${queryParams}`,
+        { method: 'GET' }
+      );
       if (!response.ok) {
         throw new Error(`Failed to fetch results: ${response.status}`);
       }
-  
       const data = await response.json();
-      setResults(data); // Update results state with the fetched data
+      setResults(data);
     } catch (error) {
       console.error('Error fetching search results:', error);
     }
   };
-  
-  
-  
 
-  // Trigger API call only if values are not default or empty
   useEffect(() => {
     const isAllDefault =
       !specialty &&
@@ -62,8 +50,8 @@ const SearchBar = () => {
       !hourlyRateTo;
 
     if (isAllDefault) {
-      setResults([]); // Clear results if all fields are default or empty
-      setHasSearched(false); // Reset search status
+      setResults([]);
+      setHasSearched(false);
     } else if (hasSearched) {
       fetchResults();
     }
@@ -71,105 +59,131 @@ const SearchBar = () => {
 
   const handleInputChange = (e, setter) => {
     setter(e.target.value);
-    setHasSearched(true); // Mark as searched when any value changes
+    setHasSearched(true);
   };
 
   return (
-    <section className="w-full bg-white py-12">
-      <div className="container mx-auto px-4">
-        <form
-          onSubmit={(e) => e.preventDefault()} // Prevent form submission since it's dynamic
-          className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-6"
-        >
-          {/* Specialty Input */}
-          <div className="relative w-full md:w-1/4">
-            <FaList className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              id="specialty"
-              value={specialty}
-              onChange={(e) => handleInputChange(e, setSpecialty)}
-              placeholder="Specialty, e.g., Financial Advisor"
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+    /* Dark gradient background with a modern sans-serif font */
+    <section className="w-full bg-gradient-to-b from-[#232529] to-[#2E2F33] py-10 font-sans">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Card container: left => filter form, right => results */}
+        <div className="flex flex-col lg:flex-row rounded-lg shadow-md overflow-hidden border border-gray-700 bg-[#2F3136]">
+          
+          {/* Left column: filter form */}
+          <div className="w-full lg:w-1/3 p-6 bg-[#34373C]">
+            <h2 className="text-xl font-bold text-[#E0E0E0] mb-4">Find a Consultant</h2>
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-5 text-gray-200">
+              {/* Specialty Input */}
+              <div className="relative">
+                <FaList className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  id="specialty"
+                  value={specialty}
+                  onChange={(e) => handleInputChange(e, setSpecialty)}
+                  placeholder="Specialty, e.g. Financial Advisor"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-600 bg-[#2F3136]
+                             rounded-md focus:outline-none focus:ring-2 focus:ring-[#E0E0E0]
+                             placeholder-gray-500 text-gray-200"
+                />
+              </div>
+
+              {/* Category Select */}
+              <div className="relative">
+                <FaList className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <select
+                  id="category"
+                  value={category}
+                  onChange={(e) => handleInputChange(e, setCategory)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-600 bg-[#2F3136]
+                             rounded-md focus:outline-none focus:ring-2 focus:ring-[#E0E0E0]
+                             text-gray-200 placeholder-gray-500"
+                >
+                  <option value="ALL">All</option>
+                  <option value="FINANCIAL">Financial</option>
+                  <option value="LEGAL">Legal</option>
+                  <option value="IT">IT</option>
+                  <option value="CAREER">Career</option>
+                  <option value="HEALTH">Health</option>
+                  <option value="MARKETING">Marketing</option>
+                  <option value="BUSINESS">Business</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
+
+              {/* Date Picker */}
+              <div className="relative">
+                <FaCalendarAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="date"
+                  id="date"
+                  value={date}
+                  onChange={(e) => handleInputChange(e, setDate)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-600 bg-[#2F3136]
+                             rounded-md focus:outline-none focus:ring-2 focus:ring-[#E0E0E0]
+                             text-gray-200 placeholder-gray-500"
+                />
+              </div>
+
+              {/* Hourly Rates */}
+              <div className="flex space-x-4">
+                <div className="relative w-1/2">
+                  <FaDollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="number"
+                    id="hourlyRateFrom"
+                    value={hourlyRateFrom}
+                    onChange={(e) => handleInputChange(e, setHourlyRateFrom)}
+                    placeholder="Rate From"
+                    min="0"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-600 bg-[#2F3136]
+                               rounded-md focus:outline-none focus:ring-2 focus:ring-[#E0E0E0]
+                               text-gray-200 placeholder-gray-500"
+                  />
+                </div>
+                <div className="relative w-1/2">
+                  <FaDollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="number"
+                    id="hourlyRateTo"
+                    value={hourlyRateTo}
+                    onChange={(e) => handleInputChange(e, setHourlyRateTo)}
+                    placeholder="Rate To"
+                    min="0"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-600 bg-[#2F3136]
+                               rounded-md focus:outline-none focus:ring-2 focus:ring-[#E0E0E0]
+                               text-gray-200 placeholder-gray-500"
+                  />
+                </div>
+              </div>
+            </form>
           </div>
 
-          {/* Category Select */}
-          <div className="relative w-full md:w-1/4">
-            <FaList className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => handleInputChange(e, setCategory)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="ALL">All</option>
-              <option value="FINANCIAL">Financial</option>
-              <option value="LEGAL">Legal</option>
-              <option value="IT">IT</option>
-              <option value="CAREER">Career</option>
-              <option value="HEALTH">Health</option>
-              <option value="MARKETING">Marketing</option>
-              <option value="BUSINESS">Business</option>
-              <option value="OTHER">Other</option>
-            </select>
+          {/* Right column: search results */}
+          <div className="w-full lg:w-2/3 p-6 text-gray-200">
+            {hasSearched && results.length > 0 ? (
+              <div>
+                <h1 className="text-xl font-bold text-[#E0E0E0] mb-4">Search Results</h1>
+                <ul className="space-y-4">
+                  {results.map((consultant, index) => (
+                    <li
+                      key={index}
+                      className="border border-gray-600 rounded-md p-4 bg-[#2F3136]
+                                 hover:shadow-md transition"
+                    >
+                      <ConsultantInfoRow key={consultant.id} consultant={consultant} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : hasSearched ? (
+              <div className="italic text-gray-400">No results found.</div>
+            ) : (
+              <div className="italic text-gray-400">
+                Start by selecting any criteria on the left.
+              </div>
+            )}
           </div>
-
-          {/* Date Picker */}
-          <div className="relative w-full md:w-1/4">
-            <FaCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="date"
-              id="date"
-              value={date}
-              onChange={(e) => handleInputChange(e, setDate)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Hourly Rate From */}
-          <div className="relative w-full md:w-1/8">
-            <FaDollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="number"
-              id="hourlyRateFrom"
-              value={hourlyRateFrom}
-              onChange={(e) => handleInputChange(e, setHourlyRateFrom)}
-              placeholder="Rate From"
-              min="0"
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Hourly Rate To */}
-          <div className="relative w-full md:w-1/8">
-            <FaDollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="number"
-              id="hourlyRateTo"
-              value={hourlyRateTo}
-              onChange={(e) => handleInputChange(e, setHourlyRateTo)}
-              placeholder="Rate To"
-              min="0"
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </form>
-
-        {/* Search Results */}
-        <div className="mt-8">
-          {hasSearched && results.length > 0 ? (
-            <ul>
-              <h1>Search results</h1>
-              {results.map((consultant, index) => (
-                <li key={index} className="border-b py-2">
-                  <ConsultantInfoRow key={consultant.id} consultant={consultant} />
-                </li>
-              ))}
-            </ul>
-          ) : hasSearched ? (
-            <p>No results found.</p>
-          ) : null}
         </div>
       </div>
     </section>

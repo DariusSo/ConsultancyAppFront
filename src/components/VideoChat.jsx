@@ -1,16 +1,18 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client/dist/sockjs.min.js";
 import { useParams } from "react-router-dom";
+import { FaPhone, FaPhoneSlash, FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 
 const VideoChat = forwardRef((props, ref) => {
+  const [isMuted, setIsMuted] = useState(false); // Track mute state
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   const peerConnectionRef = useRef(null);
   const stompClientRef = useRef(null);
   const iceCandidateQueue = useRef([]);
-  const receivedStreamRef = useRef(false); // Track if a remote stream has already been set
-  const peerId = Math.random().toString(36).substring(7); // Unique peer ID
+  const receivedStreamRef = useRef(false);
+  const peerId = Math.random().toString(36).substring(7);
   const params = useParams();
   const roomUuid = params.id;
 
@@ -30,6 +32,8 @@ const VideoChat = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     connect: connectToWebRTC,
+    startCall: startCall,
+    disconnect: disconnectCall,
   }));
 
   const handleSignalMessage = async (message) => {
@@ -90,16 +94,17 @@ const VideoChat = forwardRef((props, ref) => {
     if (peerConnectionRef.current) return;
 
     try {
-        const peerConnection = new RTCPeerConnection({
-            iceServers: [
-              {
-                urls: "turn:109.199.113.183:3478", // Replace with your TURN server URL
-                username: "root", // Replace with your TURN server username
-                credential: "Priview1234", // Replace with your TURN server password
-              },
-            ],
-            iceTransportPolicy: "relay", // Force TURN-only connections
-          });
+      const peerConnection = new RTCPeerConnection({
+        iceServers: [
+          {
+            urls: "turn:109.199.113.183:3478",
+            username: "root",
+            credential: "Priview1234",
+          },
+        ],
+        iceTransportPolicy: "relay",
+      });
+
       peerConnectionRef.current = peerConnection;
 
       peerConnection.onicecandidate = (event) => {
@@ -118,7 +123,7 @@ const VideoChat = forwardRef((props, ref) => {
           remoteVideoRef.current.srcObject !== event.streams[0]
         ) {
           remoteVideoRef.current.srcObject = event.streams[0];
-          receivedStreamRef.current = true; // Mark stream as received
+          receivedStreamRef.current = true;
         }
       };
 
@@ -174,53 +179,85 @@ const VideoChat = forwardRef((props, ref) => {
       localVideoRef.current.srcObject.getAudioTracks().forEach((track) => {
         track.enabled = !track.enabled;
       });
+      setIsMuted((prev) => !prev); // Toggle mute state
     }
   };
 
   useEffect(() => {
     if (!stompClientRef.current) {
-      connectToWebRTC();
+      
     }
 
     return () => {
       disconnectCall();
     };
+    // eslint-disable-next-line
   }, [roomUuid]);
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold mb-4">WebRTC Video Call</h1>
-      <video
-        className="w-1/2 rounded-lg shadow-lg border"
-        ref={localVideoRef}
-        autoPlay
-        playsInline
-        muted
-      />
-      <video
-        className="w-1/2 rounded-lg shadow-lg border"
-        ref={remoteVideoRef}
-        autoPlay
-        playsInline
-      />
-      <div className="flex space-x-4">
-        <button
-          onClick={startCall}
-          className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
-        >
-          Start Call
-        </button>
-        <button
-          onClick={disconnectCall}
-          className="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition"
-        >
-          Disconnect
-        </button>
+    <div
+      className="
+        relative
+        w-full h-full
+        rounded-md border border-gray-700
+        overflow-hidden
+        bg-gradient-to-b from-[#232529] to-[#2E2F33]
+        font-sans
+        flex flex-col
+      "
+    >
+      {/* Remote video: dynamically fills the parent container */}
+      <div
+        className="
+          relative
+          flex-1
+          w-full
+          aspect-video
+          bg-black
+        "
+      >
+        <video
+          ref={remoteVideoRef}
+          className="
+            absolute inset-0
+            w-full h-full
+            object-contain
+          "
+          autoPlay
+          playsInline
+        />
+      </div>
+  
+      {/* Local video pinned top-right, dynamically sized */}
+      <div
+        className="
+          absolute
+          top-4 right-4
+          w-[30%] max-w-[320px] min-w-[120px]
+          aspect-video
+          bg-[#3A3C40]
+          rounded shadow-lg
+          border border-gray-600
+        "
+      >
+        <video
+          ref={localVideoRef}
+          className="w-full h-full object-contain rounded"
+          autoPlay
+          playsInline
+          muted
+        />
+      </div>
+  
+      {/* Controls: Stays at the bottom */}
+      <div className="relative z-10 flex justify-center space-x-4 mt-auto py-4">
         <button
           onClick={toggleMute}
-          className="px-6 py-2 bg-yellow-600 text-white font-semibold rounded-lg hover:bg-yellow-700 transition"
+          className={`w-12 h-12 ${
+            isMuted ? "bg-gray-500" : "bg-gray-400"
+          } hover:bg-gray-500 text-white rounded-full flex items-center justify-center shadow-lg transition`}
         >
-          Mute/Unmute
+          {isMuted ? <FaMicrophoneSlash size={16} /> : <FaMicrophone size={16} />}
         </button>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css"; // Import date picker styles
+import "react-datepicker/dist/react-datepicker.css";
 import { getCookie } from "../modules/Cookies";
 import { loadStripe } from "@stripe/stripe-js";
 
@@ -15,45 +15,43 @@ const ConsultantInfoRow = ({ consultant }) => {
     hourlyRate,
     email,
     description,
-    availableTime, // JSON string of available times
+    availableTime,
   } = consultant;
 
-  const [isModalOpen, setIsModalOpen] = useState(false); // Booking modal
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false); // Authentication modal
-  const [selectedDate, setSelectedDate] = useState(null); // Selected date and time
-  const [availableDates, setAvailableDates] = useState([]); // Stores the available dates
-  const [timeSlotsByDate, setTimeSlotsByDate] = useState({}); // Stores times grouped by date
-  const [problemTitle, setProblemTitle] = useState(""); // Problem Title
-  const [problemDescription, setProblemDescription] = useState(""); // Problem Description
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [availableDates, setAvailableDates] = useState([]);
+  const [timeSlotsByDate, setTimeSlotsByDate] = useState({});
+  const [problemTitle, setProblemTitle] = useState("");
+  const [problemDescription, setProblemDescription] = useState("");
 
-  // Parse availableTime into usable data when the modal opens
   useEffect(() => {
     if (!availableTime) return;
-
     try {
       const parsedAvailableTime = JSON.parse(availableTime || "[]");
       const dateMap = {};
 
       parsedAvailableTime.forEach(({ date }) => {
         const [datePart, timePart] = date.split(" ");
-        if (!dateMap[datePart]) dateMap[datePart] = [];
-        dateMap[datePart].push(new Date(`${datePart}T${timePart}`)); // Push exact time
+        if (!dateMap[datePart]) {
+          dateMap[datePart] = [];
+        }
+        dateMap[datePart].push(new Date(`${datePart}T${timePart}`));
       });
-      setAvailableDates(Object.keys(dateMap).map((date) => new Date(date)));
+      setAvailableDates(Object.keys(dateMap).map((dt) => new Date(dt)));
       setTimeSlotsByDate(dateMap);
     } catch (error) {
       console.error("Error parsing available times:", error);
     }
   }, [availableTime]);
 
-  // Dynamically get the times for the selected date
   const getAvailableTimes = () => {
     if (!selectedDate) return [];
     const selectedDateKey = selectedDate.toLocaleDateString("en-CA");
     return timeSlotsByDate[selectedDateKey] || [];
   };
 
-  // Handle booking confirmation
   const handleBooking = async () => {
     if (!selectedDate) {
       alert("Please select a valid date and time before booking.");
@@ -62,7 +60,7 @@ const ConsultantInfoRow = ({ consultant }) => {
 
     const authToken = getCookie("loggedIn");
     if (!authToken) {
-      setIsAuthModalOpen(true); // Open authentication modal
+      setIsAuthModalOpen(true);
       return;
     }
 
@@ -74,12 +72,12 @@ const ConsultantInfoRow = ({ consultant }) => {
 
     const formattedDate = formatDateForBackend(selectedDate);
     const bookingPayload = {
-      title: problemTitle, // Added title
-      description: problemDescription, // Added description
-      category: consultant.categories, // Assuming `consultant` has a `category` field
-      consultantId: consultant.id, // Consultant's ID
+      title: problemTitle,
+      description: problemDescription,
+      category: consultant.categories,
+      consultantId: consultant.id,
       timeAndDate: formattedDate,
-      price: consultant.hourlyRate, // Assuming `hourlyRate` is in the consultant object
+      price: consultant.hourlyRate,
     };
 
     try {
@@ -108,11 +106,10 @@ const ConsultantInfoRow = ({ consultant }) => {
     }
   };
 
-  // Open modal and initialize data
   const openModal = async () => {
     try {
       setIsModalOpen(true);
-      setSelectedDate(null); // Reset the selected date when opening the modal
+      setSelectedDate(null);
 
       const response = await fetch(`http://localhost:8080/consultant/dates?id=${consultant.id}`, {
         method: "GET",
@@ -121,20 +118,19 @@ const ConsultantInfoRow = ({ consultant }) => {
           Authorization: getCookie("loggedIn"),
         },
       });
-
       if (!response.ok) {
         throw new Error("Failed to fetch available dates.");
       }
-
       const availableTimesFromApi = await response.json();
       const dateMap = {};
       availableTimesFromApi.forEach(({ date }) => {
         const [datePart, timePart] = date.split(" ");
-        if (!dateMap[datePart]) dateMap[datePart] = [];
+        if (!dateMap[datePart]) {
+          dateMap[datePart] = [];
+        }
         dateMap[datePart].push(`${datePart}T${timePart}`);
       });
-
-      setAvailableDates(Object.keys(dateMap).map((date) => new Date(date)));
+      setAvailableDates(Object.keys(dateMap).map((d) => new Date(d)));
       setTimeSlotsByDate(dateMap);
     } catch (error) {
       console.error("Error fetching available dates:", error);
@@ -143,132 +139,152 @@ const ConsultantInfoRow = ({ consultant }) => {
 
   return (
     <>
-      {/* Row Layout */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      {/* Row layout in a dark card with a modern sans font */}
+      <div className="flex flex-col md:flex-row items-center p-4 hover:bg-[#3D3F43] transition text-gray-200 font-sans">
         {/* Profile Picture */}
-        <div className="flex-shrink-0 w-20 h-20">
+        <div className="w-full md:w-1/4 flex justify-center md:justify-start">
           <img
             src={profilePicture || "https://via.placeholder.com/150"}
             alt={`${firstName} ${lastName}`}
-            className="w-full h-full rounded-full object-cover"
+            className="w-20 h-20 rounded-full object-cover"
           />
         </div>
 
         {/* Consultant Details */}
-        <div className="flex-1 px-4">
-          <h2 className="text-lg font-semibold">{`${firstName} ${lastName}`}</h2>
-          <p className="text-sm text-gray-500">{speciality}</p>
-          <p className="text-sm text-gray-400">{categories}</p>
-          <p className="text-sm text-gray-400">{email}</p>
+        <div className="mt-4 md:mt-0 md:flex-1 md:px-4">
+          <h2 className="text-lg font-semibold text-gray-100">
+            {`${firstName} ${lastName}`}
+          </h2>
+          <p className="text-sm text-gray-400">{speciality}</p>
+          <p className="text-xs text-gray-500">{categories}</p>
+          <p className="text-xs text-gray-500">{email}</p>
         </div>
 
-        {/* Hourly Rate */}
-        <div className="text-center pr-4">
-          <p className="text-sm text-gray-500">Hourly Rate</p>
-          <p className="text-lg font-semibold">${hourlyRate}</p>
+        {/* Hourly Rate + Button */}
+        <div className="flex flex-col items-center md:items-end space-y-2 mt-4 md:mt-0">
+          <div>
+            <p className="text-sm text-gray-400">Hourly Rate</p>
+            <p className="text-lg font-semibold text-gray-100">${hourlyRate}</p>
+          </div>
+          <button
+            onClick={openModal}
+            className="bg-[#E0E0E0] text-gray-900 px-4 py-2 rounded-md hover:bg-[#CFCFCF] transition"
+          >
+            More Info
+          </button>
         </div>
-
-        {/* More Info Button */}
-        <button
-          onClick={openModal}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
-        >
-          More Info
-        </button>
       </div>
 
       {/* Booking Modal */}
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-  <div className="fixed inset-0 bg-black bg-opacity-25" />
-  <div className="fixed inset-0 flex items-center justify-center p-4">
-    <Dialog.Panel className="w-full max-w-lg bg-white rounded-lg p-6 shadow-lg">
-      <Dialog.Title className="text-xl font-bold mb-4">{`${firstName} ${lastName}`}</Dialog.Title>
+        {/* Dark overlay */}
+        <div className="fixed inset-0 bg-black bg-opacity-50" />
+        <div className="fixed inset-0 flex items-center justify-center p-4 font-sans">
+          <Dialog.Panel className="w-full max-w-xl bg-[#2F3136] rounded-lg p-6 shadow-2xl relative text-gray-200 border border-gray-600">
+            <Dialog.Title className="text-xl font-bold mb-4 text-[#E0E0E0]">
+              {`${firstName} ${lastName}`}
+            </Dialog.Title>
 
-      {/* Consultant Description */}
-      <div className="mb-4">
-        <p className="text-sm text-gray-700">
-          <strong>Description:</strong> {description}
-        </p>
-      </div>
+            {/* Description */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-300">
+                <strong>Description:</strong> {description}
+              </p>
+            </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Appointment Title
-        </label>
-        <input
-          type="text"
-          value={problemTitle}
-          onChange={(e) => setProblemTitle(e.target.value)}
-          placeholder="Enter a title for your problem"
-          className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+            {/* Problem Title */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-1">
+                Appointment Title
+              </label>
+              <input
+                type="text"
+                value={problemTitle}
+                onChange={(e) => setProblemTitle(e.target.value)}
+                placeholder="Enter a title for your problem"
+                className="w-full border border-gray-600 bg-[#3A3C40] rounded-md px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-[#E0E0E0]
+                           text-gray-200 placeholder-gray-400"
+              />
+            </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Problem Description
-        </label>
-        <textarea
-          value={problemDescription}
-          onChange={(e) => setProblemDescription(e.target.value)}
-          placeholder="Describe your problem briefly"
-          className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          rows={3}
-        ></textarea>
-      </div>
+            {/* Problem Description */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-1">
+                Problem Description
+              </label>
+              <textarea
+                value={problemDescription}
+                onChange={(e) => setProblemDescription(e.target.value)}
+                placeholder="Describe your problem briefly"
+                className="w-full border border-gray-600 bg-[#3A3C40] rounded-md px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-[#E0E0E0]
+                           text-gray-200 placeholder-gray-400"
+                rows={3}
+              ></textarea>
+            </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Select Available Time:
-        </label>
-        <DatePicker
-          selected={selectedDate}
-          onChange={(date) => setSelectedDate(date)}
-          includeDates={availableDates}
-          includeTimes={getAvailableTimes()}
-          showTimeSelect
-          timeIntervals={15}
-          dateFormat="Pp"
-          placeholderText="Choose a date and time"
-          className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+            {/* Select Available Time */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-1">
+                Select Available Time
+              </label>
+              <DatePicker
+                selected={selectedDate}
+                onChange={(date) => setSelectedDate(date)}
+                includeDates={availableDates}
+                includeTimes={getAvailableTimes()}
+                showTimeSelect
+                timeIntervals={15}
+                dateFormat="Pp"
+                placeholderText="Choose a date and time"
+                className="w-full border border-gray-600 bg-[#3A3C40] rounded-md px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-[#E0E0E0]
+                           text-gray-200 placeholder-gray-400"
+              />
+            </div>
 
-      <button
-        onClick={handleBooking}
-        disabled={!selectedDate}
-        className={`px-4 py-2 rounded-md transition ${
-          selectedDate
-            ? "bg-green-600 text-white hover:bg-green-700"
-            : "bg-gray-300 text-gray-500 cursor-not-allowed"
-        }`}
-      >
-        {selectedDate ? "Book Appointment" : "Select a Date"}
-      </button>
+            {/* Action Buttons */}
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={handleBooking}
+                disabled={!selectedDate}
+                className={
+                  `px-4 py-2 rounded-md transition ` +
+                  (selectedDate
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-gray-600 text-gray-400 cursor-not-allowed")
+                }
+              >
+                {selectedDate ? "Book Appointment" : "Select a Date"}
+              </button>
 
-      <button
-        onClick={() => setIsModalOpen(false)}
-        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
-      >
-        Close
-      </button>
-    </Dialog.Panel>
-  </div>
-</Dialog>
-<Dialog open={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)}>
-        <div className="fixed inset-0 bg-black bg-opacity-25" />
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="w-full max-w-md bg-white rounded-lg p-6 shadow-lg">
-            <Dialog.Title className="text-lg font-bold text-center mb-4">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="bg-[#E0E0E0] text-gray-900 px-4 py-2 rounded-md hover:bg-[#CFCFCF] transition"
+              >
+                Close
+              </button>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+
+      {/* Authentication Modal */}
+      <Dialog open={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)}>
+        <div className="fixed inset-0 bg-black bg-opacity-50" />
+        <div className="fixed inset-0 flex items-center justify-center p-4 font-sans">
+          <Dialog.Panel className="w-full max-w-sm bg-[#2F3136] rounded-lg p-6 shadow-2xl border border-gray-600 text-gray-200">
+            <Dialog.Title className="text-lg font-bold text-center mb-4 text-[#E0E0E0]">
               Please Log In or Register
             </Dialog.Title>
-            <p className="text-sm text-gray-600 text-center mb-6">
+            <p className="text-sm text-gray-300 text-center mb-4">
               You need to log in or register to book an appointment.
             </p>
-            <div className="flex justify-around">
+            <div className="flex justify-center gap-4">
               <button
                 onClick={() => (window.location.href = "/login")}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+                className="bg-[#E0E0E0] text-gray-900 px-4 py-2 rounded-md hover:bg-[#CFCFCF] transition"
               >
                 Log In
               </button>
@@ -281,7 +297,8 @@ const ConsultantInfoRow = ({ consultant }) => {
             </div>
             <button
               onClick={() => setIsAuthModalOpen(false)}
-              className="mt-4 w-full bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition"
+              className="mt-4 w-full bg-gray-600 text-gray-200 px-4 py-2 rounded-md
+                         hover:bg-gray-500 transition"
             >
               Close
             </button>

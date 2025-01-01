@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ConsultantInfoRow from "./ConsultantInfoRow"; // The row component for each consultant
+import ConsultantInfoRow from "./ConsultantInfoRow";
 
 const ConsultantList = () => {
   const [consultants, setConsultants] = useState([]);
@@ -7,7 +7,6 @@ const ConsultantList = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch consultants from the API
     const fetchConsultants = async () => {
       try {
         const response = await fetch("http://localhost:8080/consultant/newest");
@@ -23,12 +22,11 @@ const ConsultantList = () => {
         setLoading(false);
       }
     };
-
     fetchConsultants();
   }, []);
 
   if (loading) {
-    return <div className="text-center text-gray-500">Loading consultants...</div>;
+    return <div className="text-center text-gray-400">Loading consultants...</div>;
   }
 
   if (error) {
@@ -36,13 +34,19 @@ const ConsultantList = () => {
   }
 
   if (consultants.length === 0) {
-    return <div className="text-center text-gray-500">No consultants found.</div>;
+    return <div className="text-center text-gray-400">No consultants found.</div>;
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-sans">
       {consultants.map((consultant) => (
-        <ConsultantInfoRow key={consultant.id} consultant={consultant} />
+        <div
+          key={consultant.id}
+          className="bg-[#2F3136] rounded-md shadow-sm border border-gray-600
+                     hover:shadow-md transition"
+        >
+          <ConsultantInfoRow consultant={consultant} />
+        </div>
       ))}
     </div>
   );
