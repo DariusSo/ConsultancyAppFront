@@ -12,6 +12,7 @@ import ChatWindow from './components/ChatWindow.jsx'
 import ConsultationRoom from './pages/ConsultationRoom.jsx'
 import ThankYouPage from './pages/ThankYouPage.jsx'
 import ErrorPage from './pages/ErrorPage.jsx'
+import RefundSuccessPage from './pages/RefundSuccessPage.jsx'
 
 
 const router = createBrowserRouter([
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
   {
     path: "/error",
     element: <ErrorPage/>,
+  },
+  {
+    path: "/refund/success",
+    element: <RefundSuccessPage/>,
   },
   
 ]);

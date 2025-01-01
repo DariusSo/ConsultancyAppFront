@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import handleCancelConsultationAndRefund from "../modules/Consultations";
 
 export default function ClientProfile({user, approvedConsultations, notApprovedConsultations}){
   console.log("Props:", { approvedConsultations, notApprovedConsultations });
@@ -85,6 +86,12 @@ export default function ClientProfile({user, approvedConsultations, notApprovedC
                     <div>
                       <strong>Price:</strong> ${consultation.price.toFixed(2)}
                     </div>
+                    <button
+                      onClick={() => handleCancelConsultationAndRefund(consultation)}
+                      className="mt-2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+                    >
+                      Cancel
+                    </button>
                   </li>
                   ))}
                 </ul>

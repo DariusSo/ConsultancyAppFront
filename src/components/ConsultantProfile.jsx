@@ -6,6 +6,7 @@ import { format } from "date-fns"; // Install date-fns for easier date formattin
 import { Link, Navigate } from "react-router-dom";
 
 import ClientProfile from "../components/ClientProfile";
+import handleCancelConsultationAndRefund from "../modules/Consultations";
 
 export default function ConsultantProfile({user, approvedConsultations, notApprovedConsultations, availableTimes, setAvailableTimes, newAvailableTime, setNewAvailableTime, setApprovedConsultations, setNotApprovedConsultations}){
   console.log("Props:", { approvedConsultations, notApprovedConsultations });
@@ -71,8 +72,6 @@ export default function ConsultantProfile({user, approvedConsultations, notAppro
         console.error("Error approving consultation:", err);
       }
     };
-    
-  
   
   return (
         <div className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -169,6 +168,12 @@ export default function ConsultantProfile({user, approvedConsultations, notAppro
             className="mt-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
           >
             Approve
+          </button>
+          <button
+            onClick={() => handleCancelConsultationAndRefund(consultation)}
+            className="mt-2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+          >
+            Cancel
           </button>
 
         </li>

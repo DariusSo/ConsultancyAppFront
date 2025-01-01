@@ -111,7 +111,6 @@ const processAppointments = (data, setApprovedConsultations, setNotApprovedConsu
       notApproved.push(appointment);
     }
   });
-  console.log("Not::::::::::::::::", notApproved);
   setApprovedConsultations(approved);
   setNotApprovedConsultations(notApproved);
 };
