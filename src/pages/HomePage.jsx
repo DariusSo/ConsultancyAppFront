@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ConsultantList from "../components/ConsultantList";
+import SearchBar from "../components/SearchBar";
 
 const HomePage = () => {
   const [consultants, setConsultants] = useState([
@@ -28,6 +29,8 @@ const HomePage = () => {
   ]);
 
   return (
+    <>
+    <SearchBar/>
     <div className="min-h-screen bg-gradient-to-b from-[#232529] to-[#2E2F33] py-8 font-sans">
       <div className="max-w-7xl mx-auto px-4 text-gray-200">
         <div className="text-center mb-8">
@@ -39,6 +42,7 @@ const HomePage = () => {
         <ConsultantList consultants={consultants} />
       </div>
     </div>
+    </>
   );
 };
 

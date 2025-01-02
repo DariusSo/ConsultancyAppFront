@@ -13,6 +13,8 @@ import ConsultationRoom from './pages/ConsultationRoom.jsx'
 import ThankYouPage from './pages/ThankYouPage.jsx'
 import ErrorPage from './pages/ErrorPage.jsx'
 import RefundSuccessPage from './pages/RefundSuccessPage.jsx'
+import AboutUs from './pages/AboutUs.jsx'
+import ContactPage from './pages/ContactUs.jsx'
 
 
 const router = createBrowserRouter([
@@ -23,6 +25,14 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage/>,
+      },
+      {
+        path: "/about",
+        element: <AboutUs/>,
+      },
+      {
+        path: "/contact",
+        element: <ContactPage/>,
       },
     ],
   },

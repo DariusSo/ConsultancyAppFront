@@ -22,7 +22,6 @@ function App() {
       <TopHeader/>
       <Banner/>
       <MainNavbar/>
-      <SearchBar/>
       <Outlet/>
     </>
   )
