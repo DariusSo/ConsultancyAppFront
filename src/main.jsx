@@ -15,6 +15,7 @@ import ErrorPage from './pages/ErrorPage.jsx'
 import RefundSuccessPage from './pages/RefundSuccessPage.jsx'
 import AboutUs from './pages/AboutUs.jsx'
 import ContactPage from './pages/ContactUs.jsx'
+import CategoryPage from './pages/CategoryPage.jsx'
 
 
 const router = createBrowserRouter([
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: "/contact",
         element: <ContactPage/>,
+      },
+      {
+        path: "/category/:category",
+        element: <CategoryPage/>,
       },
     ],
   },

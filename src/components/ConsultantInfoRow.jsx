@@ -140,40 +140,42 @@ const ConsultantInfoRow = ({ consultant }) => {
   return (
     <>
       {/* Row layout in a dark card with a modern sans font */}
-      <div className="flex flex-col md:flex-row items-center p-4 hover:bg-[#3D3F43] transition text-gray-200 font-sans">
-        {/* Profile Picture */}
-        <div className="w-full md:w-1/4 flex justify-center md:justify-start">
-          <img
-            src={profilePicture || "https://via.placeholder.com/150"}
-            alt={`${firstName} ${lastName}`}
-            className="w-20 h-20 rounded-full object-cover"
-          />
-        </div>
-
-        {/* Consultant Details */}
-        <div className="mt-4 md:mt-0 md:flex-1 md:px-4">
-          <h2 className="text-lg font-semibold text-gray-100">
-            {`${firstName} ${lastName}`}
-          </h2>
-          <p className="text-sm text-gray-400">{speciality}</p>
-          <p className="text-xs text-gray-500">{categories}</p>
-          <p className="text-xs text-gray-500">{email}</p>
-        </div>
-
-        {/* Hourly Rate + Button */}
-        <div className="flex flex-col items-center md:items-end space-y-2 mt-4 md:mt-0">
-          <div>
-            <p className="text-sm text-gray-400">Hourly Rate</p>
-            <p className="text-lg font-semibold text-gray-100">${hourlyRate}</p>
-          </div>
-          <button
-            onClick={openModal}
-            className="bg-[#E0E0E0] text-gray-900 px-4 py-2 rounded-md hover:bg-[#CFCFCF] transition"
-          >
-            More Info
-          </button>
-        </div>
+    <div className="flex items-center p-4 hover:bg-[#3D3F43] transition text-gray-200 font-sans border border-gray-600 rounded-lg">
+      {/* Profile Picture */}
+      <div className="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 flex justify-center items-center">
+        <img
+          src={profilePicture || "https://via.placeholder.com/150"}
+          alt={`${firstName} ${lastName}`}
+          className="w-full h-full rounded-full object-cover"
+        />
       </div>
+
+      {/* Consultant Details */}
+      <div className="flex-1 px-4">
+        <h2 className="text-sm md:text-lg font-semibold text-gray-100">
+          {`${firstName} ${lastName}`}
+        </h2>
+        <p className="text-xs md:text-sm text-gray-400">{speciality}</p>
+        <p className="text-xs text-gray-500 uppercase">{categories}</p>
+        <p className="text-xs text-gray-500">{email}</p>
+      </div>
+
+      {/* Hourly Rate + Button */}
+      <div className="flex flex-col items-end space-y-2">
+        <div>
+          <p className="text-xs md:text-sm text-gray-400">Hourly Rate</p>
+          <p className="text-sm md:text-lg font-semibold text-gray-100">
+            ${hourlyRate}
+          </p>
+        </div>
+        <button
+          onClick={openModal}
+          className="bg-[#E0E0E0] text-gray-900 px-3 py-2 md:px-4 md:py-2 rounded-md hover:bg-[#CFCFCF] transition text-sm"
+        >
+          More Info
+        </button>
+      </div>
+    </div>
 
       {/* Booking Modal */}
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>

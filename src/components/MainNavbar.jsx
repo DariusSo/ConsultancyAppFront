@@ -15,9 +15,9 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-[#232529] to-[#2E2F33] text-gray-200 shadow-md">
+    <nav className="bg-gradient-to-r from-[#232529] to-[#2E2F33] text-gray-200 shadow-md relative">
       {/* Navbar Container */}
-      <div className="container mx-auto px-4 flex items-center justify-between h-16">
+      <div className="container mx-auto px-4 flex items-center justify-between h-16 relative z-50">
         {/* Desktop Menu */}
         <div className="hidden md:flex flex-1 justify-center space-x-8 items-center">
           {/* Categories Dropdown */}
@@ -26,15 +26,10 @@ const Navbar = () => {
               <FaList />
               <span>Categories</span>
             </button>
-            <div className="absolute left-0 mt-2 w-40 bg-[#34373C] rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute left-0 mt-2 w-40 bg-[#34373C] rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50">
               <ul className="py-2">
                 <li>
-                  <Link to="/category/ai" className="block px-4 py-2 hover:bg-green-500 hover:text-white">
-                    AI Consultants
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/category/finance" className="block px-4 py-2 hover:bg-green-500 hover:text-white">
+                  <Link to="/category/financial" className="block px-4 py-2 hover:bg-green-500 hover:text-white">
                     Financial Advisors
                   </Link>
                 </li>
@@ -44,8 +39,28 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/category/legal" className="block px-4 py-2 hover:bg-green-500 hover:text-white">
-                    Legal Consultants
+                  <Link to="/category/it" className="block px-4 py-2 hover:bg-green-500 hover:text-white">
+                    IT Specialists
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/category/career" className="block px-4 py-2 hover:bg-green-500 hover:text-white">
+                    Career Advisors
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/category/marketing" className="block px-4 py-2 hover:bg-green-500 hover:text-white">
+                    Marketing Experts
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/category/business" className="block px-4 py-2 hover:bg-green-500 hover:text-white">
+                    Business Experts
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/category/other" className="block px-4 py-2 hover:bg-green-500 hover:text-white">
+                    Other Specialists
                   </Link>
                 </li>
               </ul>
@@ -89,7 +104,7 @@ const Navbar = () => {
       <div
         className={`${
           isMobileMenuOpen ? "h-auto py-4" : "h-16"
-        } md:hidden bg-[#34373C] text-gray-200 transition-all duration-300`}
+        } md:hidden bg-[#34373C] text-gray-200 transition-all duration-300 z-40 relative`}
       >
         <ul className={`${isMobileMenuOpen ? "space-y-2 px-4" : "hidden"}`}>
           <li>
@@ -131,11 +146,6 @@ const Navbar = () => {
             {isCategoriesOpen && (
               <ul className="mt-2 space-y-1 pl-6">
                 <li>
-                  <Link to="/category/ai" className="block hover:text-green-500">
-                    AI Consultants
-                  </Link>
-                </li>
-                <li>
                   <Link to="/category/finance" className="block hover:text-green-500">
                     Financial Advisors
                   </Link>
@@ -146,8 +156,28 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/category/legal" className="block hover:text-green-500">
-                    Legal Consultants
+                  <Link to="/category/it" className="block hover:text-green-500">
+                    IT Specialists
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/category/career" className="block hover:text-green-500">
+                    Career Advisors
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/category/marketing" className="block hover:text-green-500">
+                    Marketing Experts
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/category/business" className="block hover:text-green-500">
+                    Business Experts
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/category/other" className="block hover:text-green-500">
+                    Other Specialists
                   </Link>
                 </li>
               </ul>

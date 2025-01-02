@@ -13,6 +13,7 @@ import HomePage from './pages/HomePage'
 import ConsultantProfilePage from './pages/UserProfilePage'
 import { Outlet } from 'react-router-dom'
 import MainNavbar from './components/MainNavbar'
+import Footer from './components/Footer'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -23,6 +24,7 @@ function App() {
       <Banner/>
       <MainNavbar/>
       <Outlet/>
+      <Footer/>
     </>
   )
 }
