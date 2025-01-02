@@ -16,6 +16,8 @@ import RefundSuccessPage from './pages/RefundSuccessPage.jsx'
 import AboutUs from './pages/AboutUs.jsx'
 import ContactPage from './pages/ContactUs.jsx'
 import CategoryPage from './pages/CategoryPage.jsx'
+import AIConsultantList from './components/AIConsultantList.jsx'
+import AIChat from './components/AIChat.jsx'
 
 
 const router = createBrowserRouter([
@@ -39,11 +41,19 @@ const router = createBrowserRouter([
         path: "/category/:category",
         element: <CategoryPage/>,
       },
+      {
+        path: "/test",
+        element: <AIConsultantList/>,
+      },
     ],
   },
   {
     path: "/profile",
     element: <UserProfilePage/>,
+  },
+  {
+    path: "/test/:consultantCategory",
+    element: <AIChat/>,
   },
   {
     path: "/login",

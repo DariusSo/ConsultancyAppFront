@@ -2,6 +2,8 @@ import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
+import { handleApproveConsultation, handleRemoveAvailableTime, handleAddAvailableTime} from "../modules/ConsultantProfile";
+import handleCancelConsultationAndRefund from "../modules/Consultations";
 
 export default function ConsultantProfile({
   user,
