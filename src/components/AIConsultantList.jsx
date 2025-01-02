@@ -16,7 +16,7 @@ const AIConsultantList = () => {
       id: 2,
       title: "Healthcare AI Assistant",
       description: "Specializes in medical diagnostics, patient monitoring, and predictive healthcare insights.",
-      category: "HEALTHCARE",
+      category: "HEALTH",
     },
     {
       id: 3,
@@ -25,11 +25,29 @@ const AIConsultantList = () => {
       category: "MARKETING",
     },
     {
-      id: 5,
+      id: 4,
       title: "AI Legal Assistant",
       description: "Streamlines legal research, document drafting, and compliance analysis with AI solutions.",
       category: "LEGAL",
     },
+    {
+      id: 5,
+      title: "AI IT Consultant",
+      description: "Offers expert guidance on IT infrastructure, cloud solutions, and software development using AI-driven insights.",
+      category: "IT",
+    },
+    {
+      id: 6,
+      title: "AI Career Coach",
+      description: "Assists with resume optimization, interview preparation, and personalized career planning through AI technology.",
+      category: "CAREER",
+    },
+    {
+      id: 7,
+      title: "AI Business Strategist",
+      description: "Provides data-driven business insights, growth strategies, and market analysis with AI-powered tools.",
+      category: "BUSINESS",
+    }
   ];
 
   // Check if the user is logged in
@@ -68,9 +86,8 @@ const AIConsultantList = () => {
 
             {/* Action button */}
             <div className="mt-4 flex justify-center">
-              <Link to={"/test/" + consultant.category}>
+              <Link to={"/ai/" + consultant.category}>
               <button
-                onClick={() => handleChatRedirect(consultant.id)}
                 className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
               >
                 Start Chat

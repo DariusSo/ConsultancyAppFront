@@ -42,7 +42,7 @@ const router = createBrowserRouter([
         element: <CategoryPage/>,
       },
       {
-        path: "/test",
+        path: "/ai",
         element: <AIConsultantList/>,
       },
     ],
@@ -52,7 +52,7 @@ const router = createBrowserRouter([
     element: <UserProfilePage/>,
   },
   {
-    path: "/test/:consultantCategory",
+    path: "/ai/:consultantCategory",
     element: <AIChat/>,
   },
   {

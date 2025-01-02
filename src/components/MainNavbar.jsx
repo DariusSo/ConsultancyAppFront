@@ -69,7 +69,7 @@ const Navbar = () => {
 
           {/* Other Menu Items */}
           <Link
-            to="/ai-consultants"
+            to="/ai"
             className="flex items-center space-x-2 text-gray-200 hover:text-green-500 font-semibold"
           >
             <FaUser />
