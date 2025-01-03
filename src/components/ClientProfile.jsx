@@ -1,9 +1,87 @@
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import handleCancelConsultationAndRefund from "../modules/Consultations";
 import handleBooking from "../modules/ClientProfile";
+import { handleFetchUser } from "../modules/Consultations";
 
+export default function ClientProfile({
+  user,
+  approvedConsultations,
+  notApprovedConsultations,
+  userInfo,
+  setUserInfo,
+}) {
+  const [userInfoMap, setUserInfoMap] = useState({}); // Map to store user info by appointmentId
 
-export default function ClientProfile({ user, approvedConsultations, notApprovedConsultations }) {
+  // Fetch user info for a specific appointmentId
+  const fetchUserInfo = async (appointmentId) => {
+    if (!userInfoMap[appointmentId]) {
+      const response = await handleFetchUser(appointmentId);
+      if (response) {
+        setUserInfoMap((prev) => ({ ...prev, [appointmentId]: response }));
+      }
+    }
+  };
+
+  useEffect(() => {
+    // Fetch user info for all consultations
+    const allAppointments = [
+      ...approvedConsultations,
+      ...notApprovedConsultations,
+    ];
+    allAppointments.forEach((consultation) => {
+      fetchUserInfo(consultation.id);
+    });
+  }, [approvedConsultations, notApprovedConsultations]);
+
+  // Render consultation item
+  const renderConsultationItem = (consultation, isApproved) => (
+    <li key={consultation.id} className="border-b border-gray-700 py-4">
+      <div className="text-gray-300">
+        <strong>Client:</strong>{" "}
+        {userInfoMap[consultation.id]?.firstName}{" "}
+        {userInfoMap[consultation.id]?.lastName || "Loading..."}
+      </div>
+      <div className="text-gray-300">
+        <strong>Title:</strong> {consultation.title}
+      </div>
+      <div className="text-gray-300">
+        <strong>Description:</strong> {consultation.description}
+      </div>
+      <div className="text-gray-300">
+        <strong>Date & Time:</strong>{" "}
+        {new Date(consultation.timeAndDate).toLocaleString()}
+      </div>
+      <div className="text-gray-300">
+        <strong>Price:</strong> ${consultation.price.toFixed(2)}
+      </div>
+      {isApproved ? (
+        <Link to={`/room/${consultation.roomUuid}`}>
+          <button className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
+            Connect
+          </button>
+        </Link>
+      ) : (
+        <div>
+          <button
+            onClick={() => handleCancelConsultationAndRefund(consultation)}
+            className="mt-4 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
+          >
+            Cancel
+          </button>
+          {!consultation.paid && (
+            <button
+              onClick={() => handleBooking(consultation)}
+              className="mt-4 bg-green-500 text-white px-4 py-2 ml-5 rounded-md hover:bg-green-700 transition"
+            >
+              Pay
+            </button>
+          )}
+        </div>
+      )}
+    </li>
+  );
+
   return (
     <div className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8 bg-gradient-to-b from-[#232529] to-[#2E2F33] text-gray-200 font-sans">
       {/* Left Section: User Info */}
@@ -39,27 +117,9 @@ export default function ClientProfile({ user, approvedConsultations, notApproved
           <h3 className="text-md font-semibold text-green-400">Approved</h3>
           {approvedConsultations.length > 0 ? (
             <ul className="mt-2">
-              {approvedConsultations.map((consultation, index) => (
-                <li key={index} className="border-b border-gray-700 py-4">
-                  <div className="text-gray-300">
-                    <strong>Title:</strong> {consultation.title}
-                  </div>
-                  <div className="text-gray-300">
-                    <strong>Description:</strong> {consultation.description}
-                  </div>
-                  <div className="text-gray-300">
-                    <strong>Date & Time:</strong> {new Date(consultation.timeAndDate).toLocaleString()}
-                  </div>
-                  <div className="text-gray-300">
-                    <strong>Price:</strong> ${consultation.price.toFixed(2)}
-                  </div>
-                  <Link to={`/room/${consultation.roomUuid}`}>
-                    <button className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
-                      Connect
-                    </button>
-                  </Link>
-                </li>
-              ))}
+              {approvedConsultations.map((consultation) =>
+                renderConsultationItem(consultation, true)
+              )}
             </ul>
           ) : (
             <p className="text-gray-500 mt-2">No approved consultations.</p>
@@ -71,36 +131,9 @@ export default function ClientProfile({ user, approvedConsultations, notApproved
           <h3 className="text-md font-semibold text-red-400">Not Approved</h3>
           {notApprovedConsultations.length > 0 ? (
             <ul className="mt-2">
-              {notApprovedConsultations.map((consultation, index) => (
-                <li key={index} className="border-b border-gray-700 py-4">
-                  <div className="text-gray-300">
-                    <strong>Title:</strong> {consultation.title}
-                  </div>
-                  <div className="text-gray-300">
-                    <strong>Description:</strong> {consultation.description}
-                  </div>
-                  <div className="text-gray-300">
-                    <strong>Date & Time:</strong> {new Date(consultation.timeAndDate).toLocaleString()}
-                  </div>
-                  <div className="text-gray-300">
-                    <strong>Price:</strong> ${consultation.price.toFixed(2)}
-                  </div>
-                  <button
-                    onClick={() => handleCancelConsultationAndRefund(consultation)}
-                    className="mt-4 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
-                  >
-                    Cancel
-                  </button>
-                  {!consultation.paid && (
-                    <button
-                    onClick={() => handleBooking(consultation)}
-                    className="mt-4 bg-green-500 text-white px-4 py-2 ml-5 rounded-md hover:bg-red-700 transition"
-                  >
-                    Pay
-                  </button>
-                  )}
-                </li>
-              ))}
+              {notApprovedConsultations.map((consultation) =>
+                renderConsultationItem(consultation, false)
+              )}
             </ul>
           ) : (
             <p className="text-gray-500 mt-2">No pending consultations.</p>

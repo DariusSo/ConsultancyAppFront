@@ -9,6 +9,7 @@ import ClientProfile from "../components/ClientProfile";
 import { processUserData, processAppointments, fetchUserData, fetchAppointments } from "../modules/User";
 import TopHeader from "../components/TopHeader";
 import { fetchAndProcessData } from "../modules/User";
+import { handleFetchUser } from "../modules/Consultations";
 
 
 const UserProfilePage = () => {
@@ -18,6 +19,7 @@ const UserProfilePage = () => {
   const [availableTimes, setAvailableTimes] = useState([]);
   const [newAvailableTime, setNewAvailableTime] = useState(null);
   const [role, setRole] = useState("");
+  const [userInfo, setUserInfo] = useState("");
 
   useEffect(() => {
     
@@ -40,12 +42,16 @@ const UserProfilePage = () => {
             setNewAvailableTime={setNewAvailableTime}
             setApprovedConsultations={setApprovedConsultations}
             setNotApprovedConsultations={setNotApprovedConsultations}
+            userInfo={userInfo}
+            setUserInfo={setUserInfo}
           />
         ) : (
           <ClientProfile
             user={user}
             approvedConsultations={approvedConsultations}
             notApprovedConsultations={notApprovedConsultations}
+            userInfo={userInfo}
+            setUserInfo={setUserInfo}
           />
         )}
       </div>

@@ -23,4 +23,29 @@ const handleCancelConsultationAndRefund = async (consultation) => {
       }
 };
 
+export const handleFetchUser = async (appointmentId) => {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/appointments/info?appointmentId=${appointmentId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: getCookie("loggedIn"),
+        },
+      }
+    );
+
+    if (response.ok) {
+      const info = await response.json();
+      return info; // Return the fetched user info for further use
+    } else {
+      console.error("Failed to fetch user info:", await response.text());
+    }
+  } catch (err) {
+    console.error("Error fetching user info:", err);
+  }
+  return null; // Return null if there was an error
+};
+
+
 export default handleCancelConsultationAndRefund;
