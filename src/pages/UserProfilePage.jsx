@@ -8,6 +8,8 @@ import ConsultantProfile from "../components/ConsultantProfile";
 import ClientProfile from "../components/ClientProfile";
 import { processUserData, processAppointments, fetchUserData, fetchAppointments } from "../modules/User";
 import TopHeader from "../components/TopHeader";
+import { fetchAndProcessData } from "../modules/User";
+
 
 const UserProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -18,21 +20,8 @@ const UserProfilePage = () => {
   const [role, setRole] = useState("");
 
   useEffect(() => {
-    const fetchAndProcessData = async () => {
-      try {
-        const userData = await fetchUserData();
-        if (userData) {
-          processUserData(userData, setRole, setUser, setAvailableTimes, setApprovedConsultations, setNotApprovedConsultations);
-        }
-  
-        const appointmentsData = await fetchAppointments();
-        processAppointments(appointmentsData, setApprovedConsultations, setNotApprovedConsultations);
-      } catch (err) {
-        console.error("Error during data fetching:", err);
-      }
-    };
     
-    fetchAndProcessData();
+    fetchAndProcessData({setRole, setUser, setAvailableTimes, setApprovedConsultations, setNotApprovedConsultations, role});
     console.log(notApprovedConsultations);
   }, []);
 

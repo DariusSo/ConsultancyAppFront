@@ -45,11 +45,11 @@ const router = createBrowserRouter([
         path: "/ai",
         element: <AIConsultantList/>,
       },
+      {
+        path: "/profile",
+        element: <UserProfilePage/>,
+      },
     ],
-  },
-  {
-    path: "/profile",
-    element: <UserProfilePage/>,
   },
   {
     path: "/ai/:consultantCategory",

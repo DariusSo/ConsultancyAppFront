@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import handleCancelConsultationAndRefund from "../modules/Consultations";
+import handleBooking from "../modules/ClientProfile";
+
 
 export default function ClientProfile({ user, approvedConsultations, notApprovedConsultations }) {
   return (
@@ -89,6 +91,14 @@ export default function ClientProfile({ user, approvedConsultations, notApproved
                   >
                     Cancel
                   </button>
+                  {!consultation.paid && (
+                    <button
+                    onClick={() => handleBooking(consultation)}
+                    className="mt-4 bg-green-500 text-white px-4 py-2 ml-5 rounded-md hover:bg-red-700 transition"
+                  >
+                    Pay
+                  </button>
+                  )}
                 </li>
               ))}
             </ul>

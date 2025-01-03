@@ -33,7 +33,8 @@ export const fetchAppointments = async () => {
     return data;
   };
   
-export const processUserData = (data, setRole, setUser, setAvailableTimes, setApprovedConsultations, setNotApprovedConsultations) => {
+export const processUserData = (data, { setRole, setUser, setAvailableTimes, setApprovedConsultations, setNotApprovedConsultations }) => {
+    console.log(data);
     setRole(data.role);
     setUser(data);
   
@@ -43,18 +44,40 @@ export const processUserData = (data, setRole, setUser, setAvailableTimes, setAp
     }
   };
   
-export const processAppointments = (data, setApprovedConsultations, setNotApprovedConsultations) => {
+export const processAppointments = (data, setApprovedConsultations, setNotApprovedConsultations, role) => {
     const approved = [];
     const notApproved = [];
     data.forEach((appointment) => {
+      console.log(appointment);
+      console.log(role);
       if (appointment.accepted) {
         approved.push(appointment);
       } else {
-        notApproved.push(appointment);
+        if(role == "CONSULTANT" && !appointment.paid){
+
+        }else{
+          notApproved.push(appointment);
+        }
       }
     });
     setApprovedConsultations(approved);
     setNotApprovedConsultations(notApproved);
+  };
+
+  export const fetchAndProcessData = async ({ setRole, setUser, setAvailableTimes, setApprovedConsultations, setNotApprovedConsultations, role }) => {
+    try {
+      const userData = await fetchUserData();
+      console.log(userData);
+      var roleVar = userData.role;
+      if (userData) {
+        processUserData(userData, { setRole, setUser, setAvailableTimes, setApprovedConsultations, setNotApprovedConsultations });
+      }
+
+      const appointmentsData = await fetchAppointments();
+      processAppointments(appointmentsData, setApprovedConsultations, setNotApprovedConsultations, roleVar);
+    } catch (err) {
+      console.error("Error during data fetching:", err);
+    }
   };
 
 export default fetchUserData;
