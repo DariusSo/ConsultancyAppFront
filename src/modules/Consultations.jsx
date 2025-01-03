@@ -61,12 +61,9 @@ export const handleConnectToRoom = async (roomUuid) => {
 
     if (response.ok) {
       const isItTime = await response.json();
-       if(isItTime){
-        window.location.href = "/room/" + roomUuid;
-       }else{
-        return false;
-       }
+      return isItTime; // Return the fetched user info for further use
     } else {
+      console.error("Failed to fetch user info:", await response.text());
     }
   } catch (err) {
     console.error("Error fetching user info:", err);

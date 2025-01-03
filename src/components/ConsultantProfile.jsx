@@ -8,6 +8,7 @@ import {
   handleAddAvailableTime,
 } from "../modules/ConsultantProfile";
 import handleCancelConsultationAndRefund, {
+  handleConnectToRoom,
   handleFetchUser,
 } from "../modules/Consultations";
 
@@ -23,6 +24,11 @@ export default function ConsultantProfile({
   setNotApprovedConsultations,
 }) {
   const [userInfoMap, setUserInfoMap] = useState({}); // Map to store user info by consultation ID
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const closePopup = () => {
+    setErrorMessage(null);
+  };
 
   // Fetch user info for a specific consultation
   const fetchUserInfo = async (appointmentId) => {
@@ -36,6 +42,19 @@ export default function ConsultantProfile({
       }
     }
   };
+
+  // Handle connect logic
+    const handleConnect = async (roomUuid) => {
+      const isItTime = await handleConnectToRoom(roomUuid);
+      if (!isItTime) {
+        setErrorMessage("You can only connect 5 minutes before the consultation.");
+      } else {
+        // Redirect to room or handle successful connection logic
+        window.location.href = `/room/${roomUuid}`;
+      }
+    };
+
+    
 
   useEffect(() => {
     // Fetch user info for all consultations
@@ -70,11 +89,13 @@ export default function ConsultantProfile({
         <strong>Price:</strong> ${consultation.price.toFixed(2)}
       </div>
       {isApproved ? (
-        <Link to={`/room/${consultation.roomUuid}`}>
-          <button className="mt-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
-            Connect
-          </button>
-        </Link>
+        
+        <button
+        onClick={() => handleConnect(consultation.roomUuid)}
+        className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+      >
+        Connect
+      </button>
       ) : (
         <div className="flex space-x-4 mt-2">
           <button
@@ -226,6 +247,19 @@ export default function ConsultantProfile({
           )}
         </div>
       </div>
+      {errorMessage && (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-black p-6 rounded shadow-lg">
+            <p>{errorMessage}</p>
+            <button
+              onClick={closePopup}
+              className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

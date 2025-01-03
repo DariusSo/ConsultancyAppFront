@@ -13,7 +13,6 @@ export default function ClientProfile({
 }) {
   const [userInfoMap, setUserInfoMap] = useState({}); // Map to store user info by appointmentId
   const [errorMessage, setErrorMessage] = useState(null); // For pop-up messages
-  const connectButtonRef = useRef(null);
 
   // Fetch user info for a specific appointmentId
   const fetchUserInfo = async (appointmentId) => {
@@ -75,7 +74,6 @@ export default function ClientProfile({
       </div>
       {isApproved ? (
         <button
-          ref={connectButtonRef}
           onClick={() => handleConnect(consultation.roomUuid)}
           className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
         >
