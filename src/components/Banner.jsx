@@ -1,13 +1,28 @@
-// src/components/Banner.jsx
-import React from 'react';
+import React from "react";
+import banner from "../assets/banner2.png";
 
 const Banner = () => {
   return (
-    <section className="w-full bg-gray-100 py-16">
-        <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center h-24">
-        
+    <div className="bg-black">
+      <div className="relative text-center mt-[55px]">
+        {/* Banner Image */}
+        <img
+          src={banner}
+          alt="Banner"
+          className="w-full h-auto opacity-30"
+        />
+
+        {/* Overlay Text */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
+          <h1 className="text-gray-300 text-8xl font-bold">
+            AdvisorFlow
+          </h1>
+          <h3 className="text-gray-300 text-lg font-medium">
+            Your Trusted Flow of Professional Guidance
+          </h3>
         </div>
-    </section>
+      </div>
+    </div>
   );
 };
 

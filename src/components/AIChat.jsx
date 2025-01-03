@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom"; // Import useParams
 import { getCookie } from "../modules/Cookies"; // Utility to get cookies
 import TopHeader from "./TopHeader";
+import sendMessage from "../modules/AIChat";
 
 const AIChat = () => {
   const {consultantCategory} = useParams(); // Extract category from the URL params
@@ -10,56 +11,6 @@ const AIChat = () => {
   ]);
   const [userMessage, setUserMessage] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const sendMessage = async () => {
-    if (userMessage.trim() === "") return;
-
-    // Add user's message to the chat
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { sender: "You", content: userMessage },
-    ]);
-
-    const currentMessage = userMessage; // Save current message for async call
-    setUserMessage("");
-    setLoading(true);
-
-    try {
-      // API call to fetch AI response
-      const token = getCookie("loggedIn"); // Replace with your actual cookie name
-      const response = await fetch(
-        `http://localhost:8080/ai?message=${encodeURIComponent(
-          currentMessage
-        )}&consultantCategory=${encodeURIComponent(consultantCategory)}`, // Use category from URL
-        {
-          method: "GET",
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch AI response");
-      }
-
-      const data = await response.text(); // Assuming the response is plain text
-
-      // Add AI's response to the chat
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { sender: "AI", content: data },
-      ]);
-    } catch (error) {
-      console.error("Error fetching AI response:", error);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { sender: "AI", content: "I'm sorry, I couldn't process that. Please try again." },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleInputKeyDown = (e) => {
     if (e.key === "Enter") sendMessage();
@@ -119,7 +70,7 @@ const AIChat = () => {
             className="flex-1 bg-[#3A3C40] text-gray-200 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
           />
           <button
-            onClick={sendMessage}
+            onClick={() => sendMessage(consultantCategory, setMessages, setLoading, userMessage, setUserMessage)}
             disabled={loading}
             className={`ml-4 px-4 py-2 rounded-md transition ${
               loading

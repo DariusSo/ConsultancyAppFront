@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import setCookie from '../modules/Cookies';
+import setCookie, { getCookie } from '../modules/Cookies';
 import TopHeader from '../components/TopHeader';
 import { Navigate } from 'react-router-dom';
+import handleLogin from '../modules/LoginAndRegistration';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -11,59 +12,20 @@ const Login = () => {
   const [responseType, setResponseType] = useState(''); // 'success' or 'error'
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setResponseMessage('');
-    setResponseType('');
-
-    const formData = { email, password, role };
-
-    try {
-      // Select endpoint based on role
-      const endpoint =
-        role === 'CONSULTANT'
-          ? 'http://localhost:8080/auth/login/consultant'
-          : 'http://localhost:8080/auth/login/client';
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const text = await response.text(); // Backend returns a string message
-
-      if (!response.ok) {
-        setResponseType('error');
-        setResponseMessage(text);
-      } else {
-        setResponseType('success');
-        setResponseMessage('Logged in successfully!');
-        setCookie('loggedIn', text);
-
-        // Optionally clear the form on success
-        setEmail('');
-        setPassword('');
-        setRole('CLIENT');
-        window.location.href = '/profile';
-      }
-    } catch (error) {
-      setResponseType('error');
-      setResponseMessage('An unexpected error occurred. Please try again later.');
-      console.error('Error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <>
       <TopHeader />
       {/* Dark gradient background + modern sans-serif font */}
       <div className="min-h-screen bg-gradient-to-b from-[#232529] to-[#2E2F33] flex items-center justify-center font-sans">
         <form
-          onSubmit={handleLogin}
+          onSubmit={(e) => handleLogin(e, { email, password, role }, {
+            setEmail,
+            setPassword,
+            setRole,
+            setResponseMessage,
+            setResponseType,
+            setLoading,
+          })}
           // Dark card container
           className="w-full max-w-sm bg-[#2F3136] text-gray-200 p-6 rounded shadow-md border border-gray-700"
         >

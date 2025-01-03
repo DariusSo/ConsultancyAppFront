@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaDollarSign, FaCalendarAlt, FaList } from 'react-icons/fa';
 import ConsultantInfoRow from './ConsultantInfoRow';
+import fetchResults from '../modules/SearchBar';
 
 const SearchBar = () => {
   const [specialty, setSpecialty] = useState('');
@@ -10,36 +11,6 @@ const SearchBar = () => {
   const [hourlyRateTo, setHourlyRateTo] = useState('');
   const [results, setResults] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
-
-  const fetchResults = async () => {
-    if (hourlyRateFrom && hourlyRateTo && Number(hourlyRateFrom) > Number(hourlyRateTo)) {
-      console.error('Hourly Rate "From" should be less than or equal to "To".');
-      return;
-    }
-
-    const formattedDate = date ? new Date(date).toISOString().split('T')[0] : '';
-    const queryParams = new URLSearchParams({
-      minPrice: hourlyRateFrom || 0,
-      maxPrice: hourlyRateTo || Number.MAX_VALUE,
-      speciality: specialty,
-      category,
-      date: formattedDate,
-    }).toString();
-
-    try {
-      const response = await fetch(
-        `http://localhost:8080/consultant/search?${queryParams}`,
-        { method: 'GET' }
-      );
-      if (!response.ok) {
-        throw new Error(`Failed to fetch results: ${response.status}`);
-      }
-      const data = await response.json();
-      setResults(data);
-    } catch (error) {
-      console.error('Error fetching search results:', error);
-    }
-  };
 
   useEffect(() => {
     const isAllDefault =
@@ -53,7 +24,7 @@ const SearchBar = () => {
       setResults([]);
       setHasSearched(false);
     } else if (hasSearched) {
-      fetchResults();
+      fetchResults(date, specialty, category, hourlyRateFrom, hourlyRateTo, hasSearched, results, setResults);
     }
   }, [specialty, category, date, hourlyRateFrom, hourlyRateTo, hasSearched]);
 

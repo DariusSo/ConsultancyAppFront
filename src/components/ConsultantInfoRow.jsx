@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { getCookie } from "../modules/Cookies";
-import { loadStripe } from "@stripe/stripe-js";
+import { handleBooking, openModal, getAvailableTimes, pushAvailableTimesToDatePicker } from "../modules/ConsultantInfoRow"
 
 const ConsultantInfoRow = ({ consultant }) => {
   const {
@@ -27,115 +26,10 @@ const ConsultantInfoRow = ({ consultant }) => {
   const [problemDescription, setProblemDescription] = useState("");
 
   useEffect(() => {
-    if (!availableTime) return;
-    try {
-      const parsedAvailableTime = JSON.parse(availableTime || "[]");
-      const dateMap = {};
 
-      parsedAvailableTime.forEach(({ date }) => {
-        const [datePart, timePart] = date.split(" ");
-        if (!dateMap[datePart]) {
-          dateMap[datePart] = [];
-        }
-        dateMap[datePart].push(new Date(`${datePart}T${timePart}`));
-      });
-      setAvailableDates(Object.keys(dateMap).map((dt) => new Date(dt)));
-      setTimeSlotsByDate(dateMap);
-    } catch (error) {
-      console.error("Error parsing available times:", error);
-    }
+    pushAvailableTimesToDatePicker(availableTime, setAvailableDates, setTimeSlotsByDate);
+    
   }, [availableTime]);
-
-  const getAvailableTimes = () => {
-    if (!selectedDate) return [];
-    const selectedDateKey = selectedDate.toLocaleDateString("en-CA");
-    return timeSlotsByDate[selectedDateKey] || [];
-  };
-
-  const handleBooking = async () => {
-    if (!selectedDate) {
-      alert("Please select a valid date and time before booking.");
-      return;
-    }
-
-    const authToken = getCookie("loggedIn");
-    if (!authToken) {
-      setIsAuthModalOpen(true);
-      return;
-    }
-
-    const stripe = await loadStripe("pk_test_51PlEGq2KAAK191iLnqMx4EzwlRUP93zGEFdyBKynSDBAtbQcJTR2TwbWiKYVSHLVWL0kBq7jK3vyWABKrHB8ZvRm00Kd1TqbuX");
-    if (!stripe) {
-      console.error("Failed to initialize Stripe");
-      return;
-    }
-
-    const formattedDate = formatDateForBackend(selectedDate);
-    const bookingPayload = {
-      title: problemTitle,
-      description: problemDescription,
-      category: consultant.categories,
-      consultantId: consultant.id,
-      timeAndDate: formattedDate,
-      price: consultant.hourlyRate,
-    };
-
-    try {
-      const response = await fetch("http://localhost:8080/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: getCookie("loggedIn"),
-        },
-        body: JSON.stringify(bookingPayload),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to book the appointment.");
-      }
-
-      const session = await response.json();
-      const sessionId = session.id;
-      const { error } = await stripe.redirectToCheckout({ sessionId });
-      if (error) {
-        console.error("Stripe Checkout error:", error.message);
-      }
-    } catch (error) {
-      console.error("Booking error:", error);
-      alert("Failed to book the appointment. Please try again later.");
-    }
-  };
-
-  const openModal = async () => {
-    try {
-      setIsModalOpen(true);
-      setSelectedDate(null);
-
-      const response = await fetch(`http://localhost:8080/consultant/dates?id=${consultant.id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: getCookie("loggedIn"),
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch available dates.");
-      }
-      const availableTimesFromApi = await response.json();
-      const dateMap = {};
-      availableTimesFromApi.forEach(({ date }) => {
-        const [datePart, timePart] = date.split(" ");
-        if (!dateMap[datePart]) {
-          dateMap[datePart] = [];
-        }
-        dateMap[datePart].push(`${datePart}T${timePart}`);
-      });
-      setAvailableDates(Object.keys(dateMap).map((d) => new Date(d)));
-      setTimeSlotsByDate(dateMap);
-    } catch (error) {
-      console.error("Error fetching available dates:", error);
-    }
-  };
 
   return (
     <>
@@ -169,8 +63,8 @@ const ConsultantInfoRow = ({ consultant }) => {
           </p>
         </div>
         <button
-          onClick={openModal}
-          className="bg-[#E0E0E0] text-gray-900 px-3 py-2 md:px-4 md:py-2 rounded-md hover:bg-[#CFCFCF] transition text-sm"
+          onClick={() => openModal({setIsModalOpen, setSelectedDate, consultant, setAvailableDates, setTimeSlotsByDate})}
+          className="bg-green-500 text-gray-900 px-3 py-2 md:px-4 md:py-2 rounded-md hover:bg-green-700 transition text-sm"
         >
           More Info
         </button>
@@ -235,7 +129,7 @@ const ConsultantInfoRow = ({ consultant }) => {
                 selected={selectedDate}
                 onChange={(date) => setSelectedDate(date)}
                 includeDates={availableDates}
-                includeTimes={getAvailableTimes()}
+                includeTimes={getAvailableTimes(selectedDate, timeSlotsByDate)}
                 showTimeSelect
                 timeIntervals={15}
                 dateFormat="Pp"
@@ -249,7 +143,7 @@ const ConsultantInfoRow = ({ consultant }) => {
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={handleBooking}
+                onClick={() => handleBooking(selectedDate, consultant, setIsAuthModalOpen, problemTitle, problemDescription)}
                 disabled={!selectedDate}
                 className={
                   `px-4 py-2 rounded-md transition ` +
@@ -309,17 +203,6 @@ const ConsultantInfoRow = ({ consultant }) => {
       </Dialog>
     </>
   );
-};
-
-const formatDateForBackend = (date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = String(date.getSeconds()).padStart(2, "0");
-
-  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 };
 
 export default ConsultantInfoRow;

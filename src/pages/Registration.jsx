@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import TopHeader from '../components/TopHeader';
+import { handleRegister } from '../modules/LoginAndRegistration';
 
 const Register = () => {
   const [role, setRole] = useState('CLIENT'); // 'CLIENT' or 'CONSULTANT'
@@ -17,7 +18,6 @@ const Register = () => {
 
   // Consultant-specific fields
   const [categories, setCategories] = useState('FINANCIAL');
-  const [availableTimes, setAvailableTimes] = useState(['']);
   const [speciality, setSpeciality] = useState('');
   const [description, setDescription] = useState('');
   const [hourlyRate, setHourlyRate] = useState('');
@@ -26,84 +26,6 @@ const Register = () => {
   const [responseMessage, setResponseMessage] = useState('');
   const [responseType, setResponseType] = useState(''); // 'success' or 'error'
   const [loading, setLoading] = useState(false);
-
-  const handleAddAvailableTime = () => {
-    setAvailableTimes([...availableTimes, '']);
-  };
-
-  const handleAvailableTimeChange = (index, value) => {
-    const updatedTimes = [...availableTimes];
-    updatedTimes[index] = value;
-    setAvailableTimes(updatedTimes);
-  };
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setResponseMessage('');
-    setResponseType('');
-
-    // Check password match before sending
-    if (password !== confirmPassword) {
-      setLoading(false);
-      setResponseType('error');
-      setResponseMessage('Passwords do not match.');
-      return;
-    }
-
-    const formData = {
-      role,
-      firstName,
-      lastName,
-      email,
-      phone,
-      password,
-    };
-
-    if (role === 'CLIENT') {
-      formData.birthDate = birthDate;
-    } else {
-      formData.categories = categories;
-      formData.availableTime; // Not used in your code yet, but presumably you’d handle it like availableTimes
-      formData.speciality = speciality;
-      formData.description = description;
-      formData.hourlyRate = hourlyRate;
-    }
-
-    try {
-      let endpoint = '';
-      if (role === 'CONSULTANT') {
-        endpoint = 'http://localhost:8080/auth/consultant';
-      } else {
-        endpoint = 'http://localhost:8080/auth/client';
-      }
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const text = await response.text(); // Backend returns a string message
-
-      if (!response.ok) {
-        // Error responses (e.g., 400, etc.)
-        setResponseType('error');
-        setResponseMessage(text);
-      } else {
-        // Successful response
-        setResponseType('success');
-        setResponseMessage(text);
-        window.location.href = '/login';
-      }
-    } catch (error) {
-      setResponseType('error');
-      setResponseMessage('An unexpected error occurred. Please try again later.');
-      console.error('Error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <>
@@ -123,7 +45,24 @@ const Register = () => {
         <div className="flex items-center justify-center">
           {/** Dark card container */}
           <form
-            onSubmit={handleRegister}
+            onSubmit={(e) => handleRegister(e, {
+              role,
+              firstName,
+              lastName,
+              email,
+              phone,
+              password,
+              confirmPassword,
+              birthDate,
+              categories,
+              speciality,
+              description,
+              hourlyRate
+            }, {
+              setResponseMessage,
+              setResponseType,
+              setLoading
+            })}
             className="w-full max-w-md bg-[#2F3136] text-gray-200 p-6 rounded shadow-md border border-gray-700"
           >
             <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>

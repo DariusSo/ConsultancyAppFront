@@ -1,8 +1,8 @@
-import { Stomp } from "@stomp/stompjs";
+
 import React, { useEffect, useImperativeHandle, useRef, useState, forwardRef } from "react";
 import { useParams } from "react-router-dom";
-import SockJS from "sockjs-client/dist/sockjs.min.js";
 import { getCookie } from "../modules/Cookies";
+import { connect, handleSend } from "../modules/ChatWindow";
 
 const ChatWindow = forwardRef((props, ref) => {
   const params = useParams();
@@ -12,7 +12,6 @@ const ChatWindow = forwardRef((props, ref) => {
   const [input, setInput] = useState("");
   const [name, setName] = useState("");
   const stompClientRef = useRef(null);
-  const subscriptionRef = useRef(null);
   const nameRef = useRef("");
 
   useEffect(() => {
@@ -29,61 +28,10 @@ const ChatWindow = forwardRef((props, ref) => {
     fetchName();
   }, []);
 
-  const connect = () => {
-    const socket = new SockJS("http://localhost:8080/websocket");
-    const stompClient = Stomp.over(socket);
-
-    stompClient.connect({}, (frame) => {
-      console.log("Connected:", frame);
-      stompClient.subscribe(`/topic/consultation/${roomUuid}`, (message) => {
-        const receivedMessage = JSON.parse(message.body);
-        if (receivedMessage.name !== nameRef.current) {
-          setMessages((prev) => [
-            ...prev,
-            {
-              name: receivedMessage.name,
-              message: receivedMessage.message,
-              sentAt: receivedMessage.sentAt,
-              messageType: receivedMessage.messageType,
-            },
-          ]);
-        }
-      });
-      stompClientRef.current = stompClient;
-    });
-  };
-
   // Expose the connect function to the parent
   useImperativeHandle(ref, () => ({
-      connectToChat: connect,
-    }));
-
-  const sendMessage = (newMessage) => {
-    const stompClient = stompClientRef.current;
-    const chatMessage = {
-      name,
-      message: newMessage,
-      sentAt: new Date().toISOString(),
-      messageType: "USER",
-    };
-    stompClient.send(`/app/consultation/${roomUuid}`, {}, JSON.stringify(chatMessage));
-  };
-
-  const handleSend = () => {
-    if (input.trim() === "") return;
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        name: "You",
-        message: input,
-        sentAt: new Date().toISOString(),
-        messageType: "USER",
-      },
-    ]);
-    sendMessage(input);
-    setInput("");
-  };
+      connectToChat: () => connect(roomUuid, setMessages, stompClientRef, nameRef),
+  }));
 
   return (
     <div
@@ -134,7 +82,7 @@ const ChatWindow = forwardRef((props, ref) => {
           placeholder="Type your message..."
         />
         <button
-          onClick={handleSend}
+          onClick={() => handleSend(setMessages, setInput, input, stompClientRef, name, roomUuid)}
           className="ml-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
         >
           Send
