@@ -101,90 +101,88 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu */}
-      <div
-        className={`${
-          isMobileMenuOpen ? "h-auto py-4" : "h-16"
-        } md:hidden bg-[#34373C] text-gray-200 transition-all duration-300 z-40 relative`}
-      >
-        <ul className={`${isMobileMenuOpen ? "space-y-2 px-4" : "hidden"}`}>
-          <li>
-            <Link to="/" className="flex items-center space-x-2 hover:text-green-500">
-              <FaHome />
-              <span>Home</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/ai-consultants"
-              className="flex items-center space-x-2 hover:text-green-500"
-            >
-              <FaUser />
-              <span>AI Consultants</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/contact" className="flex items-center space-x-2 hover:text-green-500">
-              <FaPhone />
-              <span>Contact</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/about" className="flex items-center space-x-2 hover:text-green-500">
-              <FaInfoCircle />
-              <span>About Us</span>
-            </Link>
-          </li>
-          <li>
-            {/* Categories Dropdown for Mobile */}
-            <button
-              className="flex items-center space-x-2 hover:text-green-500"
-              onClick={toggleCategories}
-            >
-              <FaList />
-              <span>Categories</span>
-            </button>
-            {isCategoriesOpen && (
-              <ul className="mt-2 space-y-1 pl-6">
-                <li>
-                  <Link to="/category/finance" className="block hover:text-green-500">
-                    Financial Advisors
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/category/health" className="block hover:text-green-500">
-                    Health Experts
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/category/it" className="block hover:text-green-500">
-                    IT Specialists
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/category/career" className="block hover:text-green-500">
-                    Career Advisors
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/category/marketing" className="block hover:text-green-500">
-                    Marketing Experts
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/category/business" className="block hover:text-green-500">
-                    Business Experts
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/category/other" className="block hover:text-green-500">
-                    Other Specialists
-                  </Link>
-                </li>
-              </ul>
-            )}
-          </li>
-        </ul>
-      </div>
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-[#34373C] text-gray-200 py-4 z-40 relative">
+          <ul className="space-y-2 px-4">
+            <li>
+              <Link to="/" className="flex items-center space-x-2 hover:text-green-500">
+                <FaHome />
+                <span>Home</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/ai-consultants"
+                className="flex items-center space-x-2 hover:text-green-500"
+              >
+                <FaUser />
+                <span>AI Consultants</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/contact" className="flex items-center space-x-2 hover:text-green-500">
+                <FaPhone />
+                <span>Contact</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/about" className="flex items-center space-x-2 hover:text-green-500">
+                <FaInfoCircle />
+                <span>About Us</span>
+              </Link>
+            </li>
+            <li>
+              {/* Categories Dropdown for Mobile */}
+              <button
+                className="flex items-center space-x-2 hover:text-green-500"
+                onClick={toggleCategories}
+              >
+                <FaList />
+                <span>Categories</span>
+              </button>
+              {isCategoriesOpen && (
+                <ul className="mt-2 space-y-1 pl-6">
+                  <li>
+                    <Link to="/category/finance" className="block hover:text-green-500">
+                      Financial Advisors
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/category/health" className="block hover:text-green-500">
+                      Health Experts
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/category/it" className="block hover:text-green-500">
+                      IT Specialists
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/category/career" className="block hover:text-green-500">
+                      Career Advisors
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/category/marketing" className="block hover:text-green-500">
+                      Marketing Experts
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/category/business" className="block hover:text-green-500">
+                      Business Experts
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/category/other" className="block hover:text-green-500">
+                      Other Specialists
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+          </ul>
+        </div>
+      )}
     </nav>
   );
 };

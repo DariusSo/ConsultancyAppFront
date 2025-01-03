@@ -13,11 +13,14 @@ const Banner = () => {
         />
 
         {/* Overlay Text */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
-          <h1 className="text-gray-300 text-8xl font-bold">
+        <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 px-4">
+          {/* Title */}
+          <h1 className="text-gray-300 text-2xl sm:text-4xl md:text-5xl lg:text-8xl font-bold leading-snug text-center">
             AdvisorFlow
           </h1>
-          <h3 className="text-gray-300 text-lg font-medium">
+
+          {/* Slogan - hidden on extra-small screens */}
+          <h3 className="hidden sm:block text-gray-300 text-xs sm:text-sm md:text-base font-medium text-center">
             Your Trusted Flow of Professional Guidance
           </h3>
         </div>
