@@ -47,5 +47,32 @@ export const handleFetchUser = async (appointmentId) => {
   return null; // Return null if there was an error
 };
 
+export const handleConnectToRoom = async (roomUuid) => {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/appointments/connect?roomUuid=${roomUuid}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: getCookie("loggedIn"),
+        },
+      }
+    );
+
+    if (response.ok) {
+      const isItTime = await response.json();
+       if(isItTime){
+        window.location.href = "/room/" + roomUuid;
+       }else{
+        return false;
+       }
+    } else {
+    }
+  } catch (err) {
+    console.error("Error fetching user info:", err);
+  }
+  return null; // Return null if there was an error
+};
+
 
 export default handleCancelConsultationAndRefund;
