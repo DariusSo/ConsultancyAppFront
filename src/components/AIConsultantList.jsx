@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 const AIConsultantList = () => {
   const navigate = useNavigate();
 
-  // Hardcoded list of AI consultants
   const consultants = [
     {
       id: 1,
@@ -50,19 +49,6 @@ const AIConsultantList = () => {
     }
   ];
 
-  // Check if the user is logged in
-  const isLoggedIn = !!document.cookie.split("; ").find((row) => row.startsWith("loggedIn="));
-
-  // Redirect to chat or login
-  const handleChatRedirect = (consultantId) => {
-    if (!isLoggedIn) {
-      alert("You need to log in to start a chat.");
-      navigate("/login");
-    } else {
-      navigate(`/chat/${consultantId}`);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#232529] to-[#2E2F33] py-8 px-4">
       <h1 className="text-3xl font-bold text-green-500 mb-8 text-center">AI Consultants</h1>
@@ -84,7 +70,6 @@ const AIConsultantList = () => {
               <p className="text-sm text-gray-500 mt-2">{consultant.description}</p>
             </div>
 
-            {/* Action button */}
             <div className="mt-4 flex justify-center">
               <Link to={"/ai/" + consultant.category}>
               <button

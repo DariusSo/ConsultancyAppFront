@@ -24,11 +24,8 @@ const Navbar = () => {
 
   return (
     <nav className="bg-gradient-to-r from-[#232529] to-[#2E2F33] text-gray-200 shadow-md relative">
-      {/* Navbar Container */}
       <div className="container mx-auto px-4 flex items-center justify-between h-16 relative">
-        {/* Desktop Menu */}
         <div className="hidden md:flex flex-1 justify-center space-x-8 items-center">
-          {/* Categories Dropdown */}
           <div className="relative group">
             <button
               className="flex items-center space-x-2 text-gray-200 hover:text-green-500 font-semibold"
@@ -97,8 +94,6 @@ const Navbar = () => {
               </ul>
             </div>
           </div>
-
-          {/* Other Menu Items */}
           <Link
             to="/ai"
             className="flex items-center space-x-2 text-gray-200 hover:text-green-500 font-semibold"
@@ -122,7 +117,6 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Mobile Menu Toggle */}
         <button
           className="md:hidden text-gray-200 hover:text-green-500 text-2xl"
           onClick={toggleMobileMenu}
@@ -130,7 +124,6 @@ const Navbar = () => {
           {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
         </button>
       </div>
-
       {/* Mobile Menu */}
       <div
         className={`${

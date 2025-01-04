@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from "react";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { getCookie } from "../modules/Cookies";
-import { format } from "date-fns"; // Install date-fns for easier date formatting
-import { Navigate } from "react-router-dom";
 import ConsultantProfile from "../components/ConsultantProfile";
 import ClientProfile from "../components/ClientProfile";
-import { processUserData, processAppointments, fetchUserData, fetchAppointments } from "../modules/User";
 import TopHeader from "../components/TopHeader";
 import { fetchAndProcessData } from "../modules/User";
-import { handleFetchUser } from "../modules/Consultations";
 
 
 const UserProfilePage = () => {

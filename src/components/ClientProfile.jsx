@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import handleCancelConsultationAndRefund from "../modules/Consultations";
 import handleBooking from "../modules/ClientProfile";
 import { handleFetchUser, handleConnectToRoom } from "../modules/Consultations";
@@ -8,13 +7,10 @@ export default function ClientProfile({
   user,
   approvedConsultations,
   notApprovedConsultations,
-  userInfo,
-  setUserInfo,
 }) {
-  const [userInfoMap, setUserInfoMap] = useState({}); // Map to store user info by appointmentId
-  const [errorMessage, setErrorMessage] = useState(null); // For pop-up messages
+  const [userInfoMap, setUserInfoMap] = useState({});
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  // Fetch user info for a specific appointmentId
   const fetchUserInfo = async (appointmentId) => {
     if (!userInfoMap[appointmentId]) {
       const response = await handleFetchUser(appointmentId);
@@ -25,7 +21,6 @@ export default function ClientProfile({
   };
 
   useEffect(() => {
-    // Fetch user info for all consultations
     const allAppointments = [
       ...approvedConsultations,
       ...notApprovedConsultations,
@@ -35,23 +30,19 @@ export default function ClientProfile({
     });
   }, [approvedConsultations, notApprovedConsultations]);
 
-  // Handle connect logic
   const handleConnect = async (roomUuid) => {
     const isItTime = await handleConnectToRoom(roomUuid);
     if (!isItTime) {
       setErrorMessage("You can only connect 5 minutes before the consultation.");
     } else {
-      // Redirect to room or handle successful connection logic
       window.location.href = `/room/${roomUuid}`;
     }
   };
 
-  // Close pop-up
   const closePopup = () => {
     setErrorMessage(null);
   };
 
-  // Render consultation item
   const renderConsultationItem = (consultation, isApproved) => (
     <li key={consultation.id} className="border-b border-gray-700 py-4">
       <div className="text-gray-300">

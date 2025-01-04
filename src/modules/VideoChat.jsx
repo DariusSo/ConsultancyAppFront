@@ -78,7 +78,7 @@ export const startCall = async (peerConnectionRef, stompClientRef, receivedStrea
           {
             urls: "turn:109.199.113.183:3478",
             username: "root",
-            credential: "Priview1234",
+            credential: "",
           },
         ],
         iceTransportPolicy: "relay",

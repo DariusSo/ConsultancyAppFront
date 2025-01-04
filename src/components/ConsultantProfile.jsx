@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Link } from "react-router-dom";
-import {
-  handleApproveConsultation,
-  handleRemoveAvailableTime,
-  handleAddAvailableTime,
-} from "../modules/ConsultantProfile";
-import handleCancelConsultationAndRefund, {
-  handleConnectToRoom,
-  handleFetchUser,
-} from "../modules/Consultations";
+import { handleApproveConsultation, handleRemoveAvailableTime, handleAddAvailableTime } from "../modules/ConsultantProfile";
+import handleCancelConsultationAndRefund, {handleConnectToRoom, handleFetchUser } from "../modules/Consultations";
 
 export default function ConsultantProfile({
   user,
@@ -23,14 +15,13 @@ export default function ConsultantProfile({
   setApprovedConsultations,
   setNotApprovedConsultations,
 }) {
-  const [userInfoMap, setUserInfoMap] = useState({}); // Map to store user info by consultation ID
+  const [userInfoMap, setUserInfoMap] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
 
   const closePopup = () => {
     setErrorMessage(null);
   };
 
-  // Fetch user info for a specific consultation
   const fetchUserInfo = async (appointmentId) => {
     if (!userInfoMap[appointmentId]) {
       const userInfo = await handleFetchUser(appointmentId);
@@ -43,13 +34,11 @@ export default function ConsultantProfile({
     }
   };
 
-  // Handle connect logic
     const handleConnect = async (roomUuid) => {
       const isItTime = await handleConnectToRoom(roomUuid);
       if (!isItTime) {
         setErrorMessage("You can only connect 5 minutes before the consultation.");
       } else {
-        // Redirect to room or handle successful connection logic
         window.location.href = `/room/${roomUuid}`;
       }
     };
@@ -57,7 +46,6 @@ export default function ConsultantProfile({
     
 
   useEffect(() => {
-    // Fetch user info for all consultations
     const allAppointments = [
       ...approvedConsultations,
       ...notApprovedConsultations,
@@ -67,7 +55,6 @@ export default function ConsultantProfile({
     });
   }, [approvedConsultations, notApprovedConsultations]);
 
-  // Render consultation item
   const renderConsultationItem = (consultation, isApproved) => (
     <li key={consultation.id} className="border-b border-gray-600 py-4 text-gray-400">
       <div>

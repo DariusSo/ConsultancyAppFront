@@ -6,7 +6,6 @@ const Footer = () => {
   return (
     <footer className="bg-gradient-to-b from-[#232529] to-[#2E2F33] text-gray-300">
       <div className="container mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {/* About Section */}
         <div>
           <h3 className="text-lg font-semibold text-green-500 mb-4">About Us</h3>
           <p className="text-sm text-gray-400 leading-relaxed">
@@ -14,8 +13,6 @@ const Footer = () => {
             help you achieve your goals efficiently.
           </p>
         </div>
-
-        {/* Support & Resources Section */}
         <div>
           <h3 className="text-lg font-semibold text-green-500 mb-4">Support & Resources</h3>
           <ul className="space-y-2 text-sm">
@@ -41,8 +38,6 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-
-        {/* Quick Links Section */}
         <div>
           <h3 className="text-lg font-semibold text-green-500 mb-4">Quick Links</h3>
           <ul className="space-y-2 text-sm">
@@ -68,8 +63,6 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-
-        {/* Follow Us Section */}
         <div>
           <h3 className="text-lg font-semibold text-green-500 mb-4">Follow Us</h3>
           <p className="text-sm text-gray-400 mb-4">
@@ -111,8 +104,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-
-      {/* Footer Bottom */}
       <div className="border-t border-gray-700 mt-8 py-4 text-center text-sm text-gray-500">
         <p>&copy; {new Date().getFullYear()} Consultancy Services. All rights reserved.</p>
       </div>

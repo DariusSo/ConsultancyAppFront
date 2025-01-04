@@ -34,17 +34,12 @@ const SearchBar = () => {
   };
 
   return (
-    /* Dark gradient background with a modern sans-serif font */
     <section className="w-full bg-gradient-to-b from-[#232529] to-[#2E2F33] py-10 font-sans">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Card container: left => filter form, right => results */}
         <div className="flex flex-col lg:flex-row rounded-lg shadow-md overflow-hidden border border-gray-700 bg-[#2F3136]">
-          
-          {/* Left column: filter form */}
           <div className="w-full lg:w-1/3 p-6 bg-[#34373C]">
             <h2 className="text-xl font-bold text-[#E0E0E0] mb-4">Find a Consultant</h2>
             <form onSubmit={(e) => e.preventDefault()} className="space-y-5 text-gray-200">
-              {/* Specialty Input */}
               <div className="relative">
                 <FaList className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
@@ -58,8 +53,6 @@ const SearchBar = () => {
                              placeholder-gray-500 text-gray-200"
                 />
               </div>
-
-              {/* Category Select */}
               <div className="relative">
                 <FaList className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <select
@@ -96,7 +89,6 @@ const SearchBar = () => {
                 />
               </div>
 
-              {/* Hourly Rates */}
               <div className="flex space-x-4">
                 <div className="relative w-1/2">
                   <FaDollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -129,8 +121,6 @@ const SearchBar = () => {
               </div>
             </form>
           </div>
-
-          {/* Right column: search results */}
           <div className="w-full lg:w-2/3 p-6 text-gray-200">
             {hasSearched && results.length > 0 ? (
               <div>

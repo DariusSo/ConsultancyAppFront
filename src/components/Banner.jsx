@@ -5,21 +5,15 @@ const Banner = () => {
   return (
     <div className="bg-black">
       <div className="relative text-center mt-[55px]">
-        {/* Banner Image */}
         <img
           src={banner}
           alt="Banner"
           className="w-full h-auto opacity-30"
         />
-
-        {/* Overlay Text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 px-4">
-          {/* Title */}
           <h1 className="text-gray-300 text-2xl sm:text-4xl md:text-5xl lg:text-8xl font-bold leading-snug text-center">
             AdvisorFlow
           </h1>
-
-          {/* Slogan - hidden on extra-small screens */}
           <h3 className="hidden sm:block text-gray-300 text-xs sm:text-sm md:text-base font-medium text-center">
             Your Trusted Flow of Professional Guidance
           </h3>

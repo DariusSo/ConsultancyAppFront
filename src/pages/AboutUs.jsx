@@ -5,15 +5,12 @@ const AboutUs = () => {
   return (
     <div className="bg-gradient-to-b from-[#232529] to-[#2E2F33] text-gray-200 font-sans min-h-screen py-10">
       <div className="container mx-auto px-4">
-        {/* Header */}
         <header className="text-center mb-10">
           <h1 className="text-4xl font-bold text-green-500">About Us</h1>
           <p className="text-gray-400 mt-2 text-lg">
             Discover who we are and what drives us.
           </p>
         </header>
-
-        {/* Our Mission */}
         <section className="mb-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
@@ -37,8 +34,6 @@ const AboutUs = () => {
             </div>
           </div>
         </section>
-
-        {/* Our Team */}
         <section className="mb-16">
           <h2 className="text-2xl font-semibold text-green-500 mb-6 text-center">
             Meet Our Team
@@ -66,8 +61,6 @@ const AboutUs = () => {
             ))}
           </div>
         </section>
-
-        {/* Values */}
         <section className="mb-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -99,8 +92,6 @@ const AboutUs = () => {
             ))}
           </div>
         </section>
-
-        {/* Call to Action */}
         <section className="text-center mt-10">
           <h2 className="text-2xl font-semibold text-green-500 mb-4">
             Join Us Today

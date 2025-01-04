@@ -6,10 +6,8 @@ const CategoryPage = () => {
   const { category } = useParams(); // Get the category from URL params
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Function to fetch category data
     const fetchCategoryData = async () => {
       try {
         setLoading(true);
@@ -22,7 +20,7 @@ const CategoryPage = () => {
         const result = await response.json();
         setData(result);
       } catch (err) {
-        setError(err.message);
+        console.log(err);
       } finally {
         setLoading(false);
       }
@@ -49,7 +47,6 @@ const CategoryPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#232529] to-[#2E2F33] py-8 px-4">
-      {/* Page Title */}
       <h1 className="text-3xl font-bold text-green-500 mb-8 text-center capitalize">
         {category} Consultants
       </h1>

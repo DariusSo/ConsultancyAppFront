@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import VideoChat from "../components/VideoChat";
 import ChatWindow from "../components/ChatWindow";
 import { useNavigate, useParams } from "react-router-dom";
-import { getCookie } from "../modules/Cookies";
 import { authenticateRoom } from "../modules/Consultations";
 
 function MainPage() {

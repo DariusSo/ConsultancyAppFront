@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom"; // Import useParams
-import { getCookie } from "../modules/Cookies"; // Utility to get cookies
+import { useNavigate, useParams } from "react-router-dom";
+import { getCookie } from "../modules/Cookies";
 import TopHeader from "./TopHeader";
 import sendMessage from "../modules/AIChat";
 
 const AIChat = () => {
-  const {consultantCategory} = useParams(); // Extract category from the URL params
+  const {consultantCategory} = useParams();
   const [messages, setMessages] = useState([
     { sender: "AI", content: "Hello! How can I assist you today?" },
   ]);
@@ -26,33 +26,24 @@ const AIChat = () => {
   return (
     <>
       <TopHeader />
-      <div className="min-h-screen bg-gradient-to-b from-[#232529] to-[#2E2F33] flex flex-col pt-14">
-        {/* Chat Header */}
-        <div
-          className="bg-[#34373C] py-4 px-6 border-b border-gray-700 text-white text-lg font-bold sticky top-14 z-10"
-        >
-          AI Chat Assistant - {consultantCategory} {/* Display category */}
+      <div className="min-h-screen bg-gradient-to-b from-[#232529] 
+                    to-[#2E2F33] flex flex-col pt-14">
+        <div className="bg-[#34373C] py-4 px-6 border-b border-gray-700 
+                        text-white text-lg font-bold sticky top-14 z-10">
+          AI Chat Assistant - {consultantCategory}
         </div>
   
-        {/* Chat Messages Container */}
-        <div
-          className="flex-1 overflow-y-auto p-6 space-y-4"
-          style={{ maxHeight: "calc(100vh - 144px)" }}
-        >
+        {/* Chat messages */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4"
+              style={{ maxHeight: "calc(100vh - 144px)" }}>
           {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`flex ${
-                msg.sender === "You" ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div
-                className={`max-w-[70%] px-4 py-2 rounded-lg shadow ${
-                  msg.sender === "You"
-                    ? "bg-green-600 text-white"
-                    : "bg-[#3A3C40] text-gray-200"
-                }`}
-              >
+            <div key={index}
+                 className={`flex ${
+                 msg.sender === "You" ? "justify-end" : "justify-start"}`}>
+              <div className={`max-w-[70%] px-4 py-2 rounded-lg shadow ${
+                    msg.sender === "You"
+                      ? "bg-green-600 text-white"
+                      : "bg-[#3A3C40] text-gray-200"}`}>
                 <p className="text-sm">{msg.content}</p>
               </div>
             </div>
@@ -65,8 +56,7 @@ const AIChat = () => {
             </div>
           )}
         </div>
-  
-        {/* Chat Input */}
+        {/* Chat input */}
         <div className="bg-[#34373C] p-4 border-t border-gray-700 flex items-center">
           <input
             type="text"
@@ -91,10 +81,6 @@ const AIChat = () => {
       </div>
     </>
   );
-  
-  
-  
-  
 };
 
 export default AIChat;

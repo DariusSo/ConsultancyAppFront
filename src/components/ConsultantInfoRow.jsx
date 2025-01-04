@@ -33,9 +33,7 @@ const ConsultantInfoRow = ({ consultant }) => {
 
   return (
     <>
-      {/* Row layout in a dark card with a modern sans font */}
     <div className="flex items-center p-4 hover:bg-[#3D3F43] transition text-gray-200 font-sans border border-gray-600 rounded-lg">
-      {/* Profile Picture */}
       <div className="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 flex justify-center items-center">
         <img
           src={profilePicture || "https://via.placeholder.com/150"}
@@ -43,8 +41,6 @@ const ConsultantInfoRow = ({ consultant }) => {
           className="w-full h-full rounded-full object-cover"
         />
       </div>
-
-      {/* Consultant Details */}
       <div className="flex-1 px-4">
         <h2 className="text-sm md:text-lg font-semibold text-gray-100">
           {`${firstName} ${lastName}`}
@@ -53,8 +49,6 @@ const ConsultantInfoRow = ({ consultant }) => {
         <p className="text-xs text-gray-500 uppercase">{categories}</p>
         <p className="text-xs text-gray-500">{email}</p>
       </div>
-
-      {/* Hourly Rate + Button */}
       <div className="flex flex-col items-end space-y-2">
         <div>
           <p className="text-xs md:text-sm text-gray-400">Hourly Rate</p>
@@ -73,7 +67,6 @@ const ConsultantInfoRow = ({ consultant }) => {
 
       {/* Booking Modal */}
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        {/* Dark overlay */}
         <div className="fixed inset-0 bg-black bg-opacity-50" />
         <div className="fixed inset-0 flex items-center justify-center p-4 font-sans">
           <Dialog.Panel className="w-full max-w-xl bg-[#2F3136] rounded-lg p-6 shadow-2xl relative text-gray-200 border border-gray-600">

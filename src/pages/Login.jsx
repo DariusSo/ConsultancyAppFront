@@ -7,9 +7,9 @@ import handleLogin from '../modules/LoginAndRegistration';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('CLIENT'); // 'CLIENT' or 'CONSULTANT'
+  const [role, setRole] = useState('CLIENT');
   const [responseMessage, setResponseMessage] = useState('');
-  const [responseType, setResponseType] = useState(''); // 'success' or 'error'
+  const [responseType, setResponseType] = useState('');
   const [loading, setLoading] = useState(false);
 
   return (
@@ -66,8 +66,6 @@ const Login = () => {
           <p className="mb-4 text-center text-gray-400">
             You are logging in as a <span className="font-semibold text-gray-200">{role}</span>.
           </p>
-
-          {/* Email */}
           <div className="mb-4">
             <label className="block mb-1 font-medium text-gray-200">Email</label>
             <input
@@ -82,8 +80,6 @@ const Login = () => {
               disabled={loading}
             />
           </div>
-
-          {/* Password */}
           <div className="mb-6">
             <label className="block mb-1 font-medium text-gray-200">Password</label>
             <input
@@ -98,8 +94,6 @@ const Login = () => {
               disabled={loading}
             />
           </div>
-
-          {/* Submit Button */}
           <button
             type="submit"
             className={`w-full py-2 rounded text-gray-900 

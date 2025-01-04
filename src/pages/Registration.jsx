@@ -3,7 +3,7 @@ import TopHeader from '../components/TopHeader';
 import { handleRegister } from '../modules/LoginAndRegistration';
 
 const Register = () => {
-  const [role, setRole] = useState('CLIENT'); // 'CLIENT' or 'CONSULTANT'
+  const [role, setRole] = useState('CLIENT');
 
   // Common fields
   const [firstName, setFirstName] = useState('');
@@ -29,21 +29,9 @@ const Register = () => {
 
   return (
     <>
-      {/** Sticky TopHeader */}
       <TopHeader />
-
-      {/**
-       * The main container now has extra top padding or margin 
-       * (e.g., 'pt-20' or 'mt-20') so the form isn't hidden beneath 
-       * the sticky header.
-       */}
       <div className="min-h-screen bg-gradient-to-b from-[#232529] to-[#2E2F33] font-sans pt-20">
-        {/**
-         * We use a flex container + items-center + justify-center 
-         * if we want it vertically centered below the header
-         */}
         <div className="flex items-center justify-center">
-          {/** Dark card container */}
           <form
             onSubmit={(e) => handleRegister(e, {
               role,
@@ -66,8 +54,6 @@ const Register = () => {
             className="w-full max-w-md bg-[#2F3136] text-gray-200 p-6 rounded shadow-md border border-gray-700"
           >
             <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
-
-            {/* Role selection */}
             <div className="flex justify-center mb-6">
               <button
                 type="button"

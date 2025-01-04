@@ -5,15 +5,12 @@ const ContactPage = () => {
   return (
     <div className="bg-gradient-to-b from-[#232529] to-[#2E2F33] text-gray-200 font-sans min-h-screen py-10">
       <div className="container mx-auto px-4">
-        {/* Header */}
         <header className="text-center mb-10">
           <h1 className="text-4xl font-bold text-green-500">Contact Us</h1>
           <p className="text-gray-400 mt-2 text-lg">
             We'd love to hear from you! Reach out to us with any questions or concerns.
           </p>
         </header>
-
-        {/* Contact Details */}
         <section className="mb-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div className="bg-[#2F3136] p-6 rounded-lg shadow-lg">
@@ -36,8 +33,6 @@ const ContactPage = () => {
             </div>
           </div>
         </section>
-
-        {/* Contact Form */}
         <section className="mb-16">
           <h2 className="text-2xl font-bold text-green-500 text-center mb-6">
             Send Us a Message

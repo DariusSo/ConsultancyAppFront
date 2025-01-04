@@ -1,8 +1,7 @@
 
 import React, { useEffect, useImperativeHandle, useRef, useState, forwardRef } from "react";
 import { useParams } from "react-router-dom";
-import { getCookie } from "../modules/Cookies";
-import { connect, handleSend } from "../modules/ChatWindow";
+import { connect, getName, handleSend } from "../modules/ChatWindow";
 
 const ChatWindow = forwardRef((props, ref) => {
   const params = useParams();
@@ -28,7 +27,6 @@ const ChatWindow = forwardRef((props, ref) => {
     fetchName();
   }, []);
 
-  // Expose the connect function to the parent
   useImperativeHandle(ref, () => ({
       connectToChat: () => connect(roomUuid, setMessages, stompClientRef, nameRef),
   }));
@@ -43,7 +41,6 @@ const ChatWindow = forwardRef((props, ref) => {
         border-t md:border-t-0 md:border-l border-gray-700
       "
     >
-      {/* Top Bar */}
       <div className="p-3 bg-[#34373C] text-lg font-semibold border-b border-gray-700">
         Chat with Consultant
       </div>
@@ -55,13 +52,16 @@ const ChatWindow = forwardRef((props, ref) => {
             key={index}
             className={`mb-2 flex ${msg.name === "You" ? "justify-end" : "justify-start"}`}
           >
-            {/* Message Bubble */}
-            <div className="max-w-xs p-3 rounded-lg bg-[#3A3C40] shadow-md">
-              <p className="font-bold">{msg.name}</p>
-              <p>{msg.message}</p>
-              <p className="text-xs text-gray-400 mt-1">
-                {new Date(msg.sentAt).toLocaleString()}
-              </p>
+            <div className="flex items-start mb-4 space-x-3">
+              <div className="flex flex-col">
+                <div className={`rounded-lg p-3 shadow-md ${msg.name === "You" ? "justify-end bg-[#202122]" : "bg-[#3A3C40]"}`}>
+                  <div className="flex items-center text-gray-500 text-xs mb-1">
+                    <span>{msg.name}</span>
+                    <span className="ml-2">{new Date(msg.sentAt).toLocaleString()}</span>
+                  </div>
+                  <p className="text-sm text-gray-300">{msg.message}</p>
+                </div>
+              </div>
             </div>
           </div>
         ))}
@@ -90,33 +90,6 @@ const ChatWindow = forwardRef((props, ref) => {
       </div>
     </div>
   );
-  
-  
 });
-
-// Helper function to fetch user name
-async function getName() {
-  const token = getCookie("loggedIn");
-  const apiUrl = "http://localhost:8080/auth/profile";
-
-  try {
-    const response = await fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-    });
-
-    if (response.ok) {
-      return await response.json();
-    } else {
-      throw new Error(`HTTP error: ${response.status}`);
-    }
-  } catch (error) {
-    console.error("Error fetching user:", error);
-    throw error;
-  }
-}
 
 export default ChatWindow;
