@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom"; // Import useParams
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom"; // Import useParams
 import { getCookie } from "../modules/Cookies"; // Utility to get cookies
 import TopHeader from "./TopHeader";
 import sendMessage from "../modules/AIChat";
@@ -11,10 +11,17 @@ const AIChat = () => {
   ]);
   const [userMessage, setUserMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleInputKeyDown = (e) => {
     if (e.key === "Enter") sendMessage();
   };
+
+  useEffect(() => {
+    if(!getCookie("loggedIn")){
+      navigate("/login");
+    }
+  })
 
   return (
     <>

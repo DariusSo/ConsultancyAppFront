@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { getCookie } from "./Cookies";
 
 const handleCancelConsultationAndRefund = async (consultation) => {
@@ -69,6 +70,25 @@ export const handleConnectToRoom = async (roomUuid) => {
     console.error("Error fetching user info:", err);
   }
   return null; // Return null if there was an error
+};
+export const authenticateRoom = async (roomUuid) => {
+      try {
+        const response = await fetch(`http://localhost:8080/auth/consultationRoom?roomUuid=${roomUuid}`, {
+          method: "GET",
+          headers: {
+            "Authorization": getCookie("loggedIn"),
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+            return true;
+        } else {
+          return false;
+        }
+      } catch (error) {
+        console.error("Error during authentication:", error);
+        alert("An unknown error occurred. Please try again later.");
+      }
 };
 
 

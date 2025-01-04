@@ -3,6 +3,7 @@ import VideoChat from "../components/VideoChat";
 import ChatWindow from "../components/ChatWindow";
 import { useNavigate, useParams } from "react-router-dom";
 import { getCookie } from "../modules/Cookies";
+import { authenticateRoom } from "../modules/Consultations";
 
 function MainPage() {
   const [isMobile, setIsMobile] = useState(false);
@@ -13,44 +14,14 @@ function MainPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const authenticateRoom = async () => {
-      const jwtToken = getCookie("loggedIn");
-
-      if (!jwtToken) {
-        // If the token is missing, redirect to login
-        navigate("/login");
-        return;
-      }
-      try {
-        const response = await fetch(`http://localhost:8080/auth/consultationRoom?roomUuid=${roomUuid}`, {
-          method: "GET",
-          headers: {
-            "Authorization": jwtToken,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          if (response.status === 401 || response.status === 400) {
-            navigate("/login"); // Redirect to login if unauthorized or bad role
-          } else {
-            console.error("Error authenticating room:", await response.text());
-            alert("An error occurred. Please try again.");
-          }
-        } else {
-          console.log("Authentication successful");
-        }
-      } catch (error) {
-        console.error("Error during authentication:", error);
-        alert("An unknown error occurred. Please try again later.");
+    const checkAuth = async () => {
+      let flag = await authenticateRoom(roomUuid);
+      if(flag != true){
         navigate("/login");
       }
-    };
-
-    authenticateRoom();
+    }
+    checkAuth();
   }, []);
-
-
 
   const handleConnectToVideoAndChat = () => {
     if (videoChatRef.current && chatRef.current) {
