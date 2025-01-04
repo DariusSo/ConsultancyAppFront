@@ -28,6 +28,7 @@ const UserProfilePage = () => {
         {role === 'CONSULTANT' ? (
           <ConsultantProfile
             user={user}
+            setUser={setUser}
             approvedConsultations={approvedConsultations}
             notApprovedConsultations={notApprovedConsultations}
             availableTimes={availableTimes}
@@ -42,6 +43,7 @@ const UserProfilePage = () => {
         ) : (
           <ClientProfile
             user={user}
+            setUser={setUser}
             approvedConsultations={approvedConsultations}
             notApprovedConsultations={notApprovedConsultations}
             userInfo={userInfo}

@@ -34,4 +34,31 @@ export const handleBooking = async (consultation) => {
       alert("Failed to book the appointment. Please try again later.");
     }
   };
+  export const handleSaveInfo = async (e, editableUser, setUser, setIsEditing) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:8080/client/edit", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getCookie("loggedIn"), // Replace with your actual function
+        },
+        body: JSON.stringify(editableUser),
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        alert(errorMessage || "Failed to update user info.");
+        return;
+      }
+
+      alert("User info updated successfully!");
+      setUser(editableUser); // Update global user state
+      setIsEditing(false); // Exit edit mode
+    } catch (error) {
+      console.error("Error updating user info:", error);
+      alert("An error occurred while updating user info.");
+    }
+  };
   export default handleBooking;

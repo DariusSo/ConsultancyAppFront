@@ -6,7 +6,7 @@ import { handleBooking, openModal, getAvailableTimes, pushAvailableTimesToDatePi
 
 const ConsultantInfoRow = ({ consultant }) => {
   const {
-    profilePicture,
+    imageUrl,
     firstName,
     lastName,
     speciality,
@@ -36,7 +36,7 @@ const ConsultantInfoRow = ({ consultant }) => {
     <div className="flex items-center p-4 hover:bg-[#3D3F43] transition text-gray-200 font-sans border border-gray-600 rounded-lg">
       <div className="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 flex justify-center items-center">
         <img
-          src={profilePicture || "https://via.placeholder.com/150"}
+          src={imageUrl || "https://via.placeholder.com/150"}
           alt={`${firstName} ${lastName}`}
           className="w-full h-full rounded-full object-cover"
         />

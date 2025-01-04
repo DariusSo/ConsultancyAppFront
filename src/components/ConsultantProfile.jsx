@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { handleApproveConsultation, handleRemoveAvailableTime, handleAddAvailableTime } from "../modules/ConsultantProfile";
+import { handleApproveConsultation, handleRemoveAvailableTime, handleAddAvailableTime, handleSaveInfo, handleUploadPhoto } from "../modules/ConsultantProfile";
 import handleCancelConsultationAndRefund, {handleConnectToRoom, handleFetchUser } from "../modules/Consultations";
+import { getCookie } from "../modules/Cookies";
 
 export default function ConsultantProfile({
   user,
+  setUser,
   approvedConsultations,
   notApprovedConsultations,
   availableTimes,
@@ -15,11 +17,40 @@ export default function ConsultantProfile({
   setApprovedConsultations,
   setNotApprovedConsultations,
 }) {
-  const [userInfoMap, setUserInfoMap] = useState({});
-  const [errorMessage, setErrorMessage] = useState(null);
+    const [userInfoMap, setUserInfoMap] = useState({});
+    const [errorMessage, setErrorMessage] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showPhotoModal, setShowPhotoModal] = useState(false);
+    const [photoFile, setPhotoFile] = useState(null);
+    const [editingUser, setEditingUser] = useState(null);
 
-  const closePopup = () => {
-    setErrorMessage(null);
+    const closePopup = () => {
+      setErrorMessage(null);
+    };
+
+    const handleAddPhoto = () => {
+      setShowPhotoModal(true);
+    };
+
+  // Open edit modal and initialize editingUser
+  const handleEditInfo = () => {
+    setEditingUser({ ...user }); // Clone current user into editingUser
+    setShowEditModal(true);
+  };
+
+  // Close modal and discard unsaved changes
+  const handleCloseModal = () => {
+    setShowEditModal(false);
+    setShowPhotoModal(false); // Close the photo modal as well
+    setEditingUser(null); // Reset editing user state
+    setPhotoFile(null); // Clear the selected photo file
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhotoFile(file);
+    }
   };
 
   const fetchUserInfo = async (appointmentId) => {
@@ -34,16 +65,16 @@ export default function ConsultantProfile({
     }
   };
 
-    const handleConnect = async (roomUuid) => {
-      const isItTime = await handleConnectToRoom(roomUuid);
-      if (!isItTime) {
-        setErrorMessage("You can only connect 5 minutes before the consultation.");
-      } else {
-        window.location.href = `/room/${roomUuid}`;
-      }
-    };
+  const handleConnect = async (roomUuid) => {
+    const isItTime = await handleConnectToRoom(roomUuid);
+    if (!isItTime) {
+      setErrorMessage("You can only connect 5 minutes before the consultation.");
+    } else {
+      window.location.href = `/room/${roomUuid}`;
+    }
+  };
 
-    
+      
 
   useEffect(() => {
     const allAppointments = [
@@ -54,6 +85,9 @@ export default function ConsultantProfile({
       fetchUserInfo(consultation.id);
     });
   }, [approvedConsultations, notApprovedConsultations]);
+
+    
+
 
   const renderConsultationItem = (consultation, isApproved) => (
     <li key={consultation.id} className="border-b border-gray-600 py-4 text-gray-400">
@@ -115,7 +149,7 @@ export default function ConsultantProfile({
         {user ? (
           <>
             <img
-              src="https://via.placeholder.com/150"
+              src={user.imageUrl || "https://via.placeholder.com/150"}
               alt={user.firstName}
               className="w-32 h-32 rounded-full mx-auto mb-4 border border-gray-600"
             />
@@ -132,11 +166,151 @@ export default function ConsultantProfile({
             <p>
               <strong>Description:</strong> {user.description}
             </p>
+            <div className="mt-6 flex justify-center gap-4">
+              <button
+                onClick={handleEditInfo}
+                className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
+              >
+                Edit Info
+              </button>
+              <button
+                onClick={handleAddPhoto}
+                className="py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg"
+              >
+                Add Photo
+              </button>
+            </div>
           </>
         ) : (
           <p>Loading user info...</p>
         )}
+
+        {/* Styled Modals */}
+        {(showEditModal || showPhotoModal) && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-gradient-to-b from-[#232529] to-[#2E2F33] p-6 rounded-lg shadow-lg border border-gray-700 w-full max-w-md">
+              <h2 className="text-xl font-bold text-gray-200 mb-4 text-center">
+                {showEditModal ? "Edit Info" : "Add Photo"}
+              </h2>
+
+              {showEditModal && (
+                <form onSubmit={(e) => handleSaveInfo(e, editingUser, setErrorMessage, setEditingUser, setShowEditModal, setShowPhotoModal, setPhotoFile)}>
+                  <label className="block mb-4">
+                    <span className="text-gray-300">First Name:</span>
+                    <input
+                      type="text"
+                      value={editingUser?.firstName || ""}
+                      onChange={(e) =>
+                        setEditingUser((prev) => ({ ...prev, firstName: e.target.value }))
+                      }
+                      className="w-full mt-1 p-2 bg-[#2F3136] border border-gray-600 rounded-lg text-gray-300"
+                    />
+                  </label>
+                  <label className="block mb-4">
+                    <span className="text-gray-300">Last Name:</span>
+                    <input
+                      type="text"
+                      value={editingUser?.lastName || ""}
+                      onChange={(e) =>
+                        setEditingUser((prev) => ({ ...prev, lastName: e.target.value }))
+                      }
+                      className="w-full mt-1 p-2 bg-[#2F3136] border border-gray-600 rounded-lg text-gray-300"
+                    />
+                  </label>
+                  <label className="block mb-4">
+                    <span className="text-gray-300">Last Name:</span>
+                    <input
+                      type="text"
+                      value={editingUser?.email || ""}
+                      onChange={(e) =>
+                        setEditingUser((prev) => ({ ...prev, email: e.target.value }))
+                      }
+                      className="w-full mt-1 p-2 bg-[#2F3136] border border-gray-600 rounded-lg text-gray-300"
+                    />
+                  </label>
+                  <label className="block mb-4">
+                    <span className="text-gray-300">Specialty:</span>
+                    <input
+                      type="text"
+                      value={editingUser?.specialty || ""}
+                      onChange={(e) =>
+                        setEditingUser((prev) => ({ ...prev, specialty: e.target.value }))
+                      }
+                      className="w-full mt-1 p-2 bg-[#2F3136] border border-gray-600 rounded-lg text-gray-300"
+                    />
+                  </label>
+                  <label className="block mb-4">
+                    <span className="text-gray-300">Description:</span>
+                    <textarea
+                      value={editingUser?.description || ""}
+                      onChange={(e) =>
+                        setEditingUser((prev) => ({ ...prev, description: e.target.value }))
+                      }
+                      className="w-full mt-1 p-2 bg-[#2F3136] border border-gray-600 rounded-lg text-gray-300"
+                    ></textarea>
+                  </label>
+                  <label className="block mb-4">
+                    <span className="text-gray-300">Hourly Rate:</span>
+                    <input
+                      type="number"
+                      value={editingUser?.hourlyRate || ""}
+                      onChange={(e) =>
+                        setEditingUser((prev) => ({ ...prev, hourlyRate: e.target.value }))
+                      }
+                      className="w-full mt-1 p-2 bg-[#2F3136] border border-gray-600 rounded-lg text-gray-300"
+                    />
+                  </label>
+                  <div className="flex justify-end gap-4 mt-4">
+                    <button
+                      type="button"
+                      onClick={handleCloseModal}
+                      className="py-2 px-4 bg-gray-500 hover:bg-gray-600 text-white rounded-lg"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </form>
+              )}
+              {showPhotoModal && (
+                <form onSubmit={(e) => handleUploadPhoto(e, photoFile, handleCloseModal, user, setUser)}>
+                  <label className="block mb-4">
+                    <span className="text-gray-300">Upload Photo:</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      className="w-full mt-1 p-2 bg-[#2F3136] border border-gray-600 rounded-lg text-gray-300"
+                    />
+                  </label>
+                  <div className="flex justify-end gap-4 mt-4">
+                    <button
+                      type="button"
+                      onClick={handleCloseModal}
+                      className="py-2 px-4 bg-gray-500 hover:bg-gray-600 text-white rounded-lg"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="py-2 px-4 bg-green-600 hover:bg-green-700 text-white rounded-lg"
+                    >
+                      Upload
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        )}
       </div>
+    
+
 
       {/* Middle Section: Consultations */}
       <div className="bg-[#2F3136] rounded-lg shadow p-6 border border-gray-700">

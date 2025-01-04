@@ -1,15 +1,26 @@
 import React, { useEffect, useState } from "react";
 import handleCancelConsultationAndRefund from "../modules/Consultations";
-import handleBooking from "../modules/ClientProfile";
+import handleBooking, { handleSaveInfo } from "../modules/ClientProfile";
 import { handleFetchUser, handleConnectToRoom } from "../modules/Consultations";
+import { getCookie } from "../modules/Cookies";
 
 export default function ClientProfile({
   user,
+  setUser,
   approvedConsultations,
   notApprovedConsultations,
 }) {
   const [userInfoMap, setUserInfoMap] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
+
+  const [isEditing, setIsEditing] = useState(false); // Toggle edit mode
+  const [editableUser, setEditableUser] = useState(user); // Local editable copy
+
+  useEffect(() => {
+    if (user) {
+      setEditableUser(user);
+    }
+  }, [user]);
 
   const fetchUserInfo = async (appointmentId) => {
     if (!userInfoMap[appointmentId]) {
@@ -95,27 +106,102 @@ export default function ClientProfile({
     <div className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8 bg-gradient-to-b from-[#232529] to-[#2E2F33] text-gray-200 font-sans">
       {/* Left Section: User Info */}
       <div className="bg-[#2F3136] rounded-lg shadow p-6">
-        {user ? (
-          <>
-            <img
-              src="https://via.placeholder.com/150"
-              alt={user.firstName}
-              className="w-32 h-32 rounded-full mx-auto mb-4"
-            />
-            <h1 className="text-xl font-bold text-center text-white">
-              {user.firstName} {user.lastName}
-            </h1>
-            <p className="mt-4 text-gray-400">
-              <strong>Email:</strong> {user.email}
-            </p>
-            <p className="text-gray-400">
-              <strong>Phone:</strong> {user.phone}
-            </p>
-          </>
-        ) : (
-          <p className="text-gray-400">Loading user info...</p>
-        )}
-      </div>
+      {editableUser ? (
+        <>
+          <h1 className="text-xl font-bold text-center text-white">
+            {isEditing ? (
+              <input
+                type="text"
+                value={editableUser.firstName}
+                onChange={(e) =>
+                  setEditableUser((prev) => ({
+                    ...prev,
+                    firstName: e.target.value,
+                  }))
+                }
+                className="w-full mt-2 p-2 bg-[#232529] border border-gray-600 rounded-lg text-gray-300"
+              />
+            ) : (
+              `${editableUser.firstName} ${editableUser.lastName}`
+            )}
+          </h1>
+          <p className="mt-4 text-gray-400">
+            <strong>Email:</strong>{" "}
+            {isEditing ? (
+              <input
+                type="email"
+                value={editableUser.email}
+                onChange={(e) =>
+                  setEditableUser((prev) => ({
+                    ...prev,
+                    email: e.target.value,
+                  }))
+                }
+                className="w-full mt-2 p-2 bg-[#232529] border border-gray-600 rounded-lg text-gray-300"
+              />
+            ) : (
+              editableUser.email
+            )}
+          </p>
+          <p className="text-gray-400">
+            <strong>Phone:</strong>{" "}
+            {isEditing ? (
+              <input
+                type="tel"
+                value={editableUser.phone}
+                onChange={(e) =>
+                  setEditableUser((prev) => ({
+                    ...prev,
+                    phone: e.target.value,
+                  }))
+                }
+                className="w-full mt-2 p-2 bg-[#232529] border border-gray-600 rounded-lg text-gray-300"
+              />
+            ) : (
+              editableUser.phone
+            )}
+          </p>
+          {!isEditing && (
+            <>
+              <div className="mt-4">
+                <strong>Approved Consultations:</strong> {approvedConsultations.length}
+              </div>
+              <div className="mt-2">
+                <strong>Not Approved Consultations:</strong> {notApprovedConsultations.length}
+              </div>
+            </>
+          )}
+          {isEditing && (
+            <div className="flex justify-end gap-4 mt-4">
+              <button
+                onClick={() => {setIsEditing(false); setEditableUser(user);}}
+                className="py-2 px-4 bg-gray-500 hover:bg-gray-600 text-white rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={(e) => handleSaveInfo(e, editableUser, setUser, setIsEditing)}
+                className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+              >
+                Save
+              </button>
+            </div>
+          )}
+          {!isEditing && (
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => setIsEditing(true)}
+                className="py-2 px-4 bg-green-600 hover:bg-green-700 text-white rounded-lg"
+              >
+                Edit Info
+              </button>
+            </div>
+          )}
+        </>
+      ) : (
+        <p className="text-gray-400">Loading user info...</p>
+      )}
+    </div>
 
       {/* Middle Section: Consultations */}
       <div className="bg-[#2F3136] rounded-lg shadow p-6">

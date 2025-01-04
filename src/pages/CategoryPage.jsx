@@ -37,14 +37,6 @@ const CategoryPage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-[#232529] to-[#2E2F33] text-gray-200">
-        <p className="text-xl font-semibold text-red-500">{error}</p>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#232529] to-[#2E2F33] py-8 px-4">
       <h1 className="text-3xl font-bold text-green-500 mb-8 text-center capitalize">
