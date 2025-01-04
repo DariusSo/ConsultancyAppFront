@@ -161,17 +161,18 @@ export default function ClientProfile({
 
       {/* Error Pop-up */}
       {errorMessage && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white text-black p-6 rounded shadow-lg">
-            <p>{errorMessage}</p>
-            <button
-              onClick={closePopup}
-              className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
-            >
-              Close
-            </button>
-          </div>
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-70 font-sans">
+        <div className="bg-[#2F3136] text-gray-200 p-6 rounded-lg shadow-lg border border-gray-600">
+          <p className="text-sm text-gray-300">{errorMessage}</p>
+          <button
+            onClick={closePopup}
+            className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+          >
+            Close
+          </button>
         </div>
+      </div>
+      
       )}
     </div>
   );
