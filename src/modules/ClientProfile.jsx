@@ -34,7 +34,7 @@ export const handleBooking = async (consultation) => {
       alert("Failed to book the appointment. Please try again later.");
     }
   };
-  export const handleSaveInfo = async (e, editableUser, setUser, setIsEditing) => {
+  export const handleSaveInfo = async (e, editableUser, setUser, setIsEditing, setErrorMessage) => {
     e.preventDefault();
 
     try {
@@ -49,16 +49,78 @@ export const handleBooking = async (consultation) => {
 
       if (!response.ok) {
         const errorMessage = await response.text();
-        alert(errorMessage || "Failed to update user info.");
+        setErrorMessage(errorMessage || "Failed to update user info.");
         return;
       }
 
-      alert("User info updated successfully!");
+      setErrorMessage("User info updated successfully!");
       setUser(editableUser); // Update global user state
       setIsEditing(false); // Exit edit mode
     } catch (error) {
       console.error("Error updating user info:", error);
-      alert("An error occurred while updating user info.");
+      setErrorMessage("An error occurred while updating user info.");
     }
   };
+
+  export const handleUploadPhoto = async (e, photoFile, handleCloseModal, user, setUser, setErrorMessage) => {
+    e.preventDefault();
+  
+    if (!photoFile) {
+      alert("Please select a photo to upload.");
+      return;
+    }
+  
+    try {
+      // Step 1: Upload Photo to ImgBB
+      const formData = new FormData();
+      formData.append("image", photoFile);
+      const API_KEY = "b0a153b4ffa68be3b12a43d068976972"; // Your ImgBB API key
+  
+      const imgResponse = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
+        method: "POST",
+        body: formData,
+      });
+  
+      const imgData = await imgResponse.json();
+  
+      if (!imgData.success) {
+        console.error("ImgBB upload failed:", imgData);
+        alert("Photo upload failed. Please try again.");
+        return;
+      }
+  
+      console.log("Uploaded image URL:", imgData.data.url);
+  
+      // Step 2: Save Updated User to Backend
+      const updatedUser = { ...user, imageUrl: imgData.data.url };
+  
+      const saveResponse = await fetch("http://localhost:8080/client/edit", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getCookie("loggedIn"), // Ensure this utility is defined
+        },
+        body: JSON.stringify(updatedUser),
+      });
+  
+      if (!saveResponse.ok) {
+        const saveError = await saveResponse.text();
+        console.error("Error saving user:", saveError);
+        setErrorMessage(saveError || "Failed to save updated user.");
+        return;
+      }
+  
+      console.log("Backend response:", await saveResponse.text());
+      setUser(updatedUser); // Update the user state locally
+      setErrorMessage("Photo uploaded and user updated successfully!");
+  
+    } catch (error) {
+      console.error("Error uploading photo or saving user:", error);
+      setErrorMessage("An error occurred while uploading the photo or saving user data.");
+    } finally {
+      handleCloseModal(); // Close modal in all cases
+    }
+  };
+  
+
   export default handleBooking;
