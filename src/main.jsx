@@ -18,6 +18,7 @@ import ContactPage from './pages/ContactUs.jsx'
 import CategoryPage from './pages/CategoryPage.jsx'
 import AIConsultantList from './components/AIConsultantList.jsx'
 import AIChat from './components/AIChat.jsx'
+import ConsultantForumPage from './pages/ConsultantForumPage.jsx'
 
 
 const router = createBrowserRouter([
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <UserProfilePage/>,
+      },
+      {
+        path: "/forum/:id",
+        element: <ConsultantForumPage/>,
       },
     ],
   },
