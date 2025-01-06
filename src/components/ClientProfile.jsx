@@ -116,7 +116,7 @@ export default function ClientProfile({
   return (
     <div className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8 bg-gradient-to-b from-[#232529] to-[#2E2F33] text-gray-200 font-sans animate-fade-in">
       {/* Left Section: User Info */}
-      <div className="bg-[#2F3136] rounded-lg shadow p-6 h-auto md:h-[350px]">
+      <div className="bg-[#2F3136] rounded-lg shadow p-6 h-auto md:h-[380px]">
         <div className="text-center">
           <img
             src={user?.imageUrl || "https://via.placeholder.com/150"}

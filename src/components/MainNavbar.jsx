@@ -142,7 +142,7 @@ const Navbar = () => {
           </li>
           <li>
             <Link
-              to="/ai-consultants"
+              to="/ai"
               className="flex items-center space-x-2 hover:text-green-500"
             >
               <FaUser />

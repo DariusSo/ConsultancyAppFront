@@ -37,9 +37,10 @@ const ConsultantForumPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#232529] to-[#2E2F33] text-gray-200 font-sans pt-7">
+    <div className="min-h-screen bg-gradient-to-b from-[#232529] to-[#2E2F33] text-gray-200 font-sans pt-7 px-4 sm:px-6">
       {/* Consultant Info */}
-      <div className="bg-[#2F3136] rounded-lg shadow p-6 mb-8 max-w-4xl mx-auto flex flex-col lg:flex-row items-start lg:items-center gap-6">
+      <div className="bg-[#2F3136] rounded-lg shadow p-4 sm:p-6 mb-8 max-w-full sm:max-w-4xl mx-auto flex flex-col lg:flex-row items-start lg:items-center gap-4">
+
         {/* Profile Picture */}
         <div className="flex-shrink-0 flex justify-center">
           <img
@@ -82,7 +83,7 @@ const ConsultantForumPage = () => {
         {/* CLIENT: Ask a Question */}
         {role === 'CLIENT' && (
           <div className="mb-6">
-            <h3 className="text-md font-semibold text-gray-300 mb-2">Ask a Question</h3>
+            <h3 className="text-md font-semibold text-gray-300 mb-4 pl-2">Ask a Question</h3>
             <textarea
               value={newQuestion}
               onChange={(e) => setNewQuestion(e.target.value)}
@@ -91,7 +92,7 @@ const ConsultantForumPage = () => {
             />
             <button
               onClick={() => handlePostQuestion(newQuestion, userName, id, setQuestions, setNewQuestion, questions)}
-              className="py-2 px-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition transform hover:scale-105"
+              className="py-2 px-4 pl-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition transform hover:scale-105"
             >
               Post Question
             </button>
@@ -102,21 +103,27 @@ const ConsultantForumPage = () => {
           {questions.slice().reverse().map((question) => (
             <div
               key={question.id}
-              className="bg-[#2F3136] p-4 rounded-lg shadow mb-4 border border-gray-600 relative"
+              className="bg-[#2F3136] p-4 rounded-lg shadow mb-4 border border-gray-600 relative overflow-hidden"
             >
               <p className="text-gray-400 text-sm absolute top-2 left-4">
                 {new Date(question.questionAsked).toLocaleString()}
               </p>
 
               <div className="p-4 border border-gray-600 rounded-lg bg-[#1E1F23] mt-6">
-                <h4 className="text-md font-semibold text-white mb-2">{question.name}</h4>
-                <p className="text-gray-200">{question.question}</p>
+                <h4 className="text-md font-semibold text-blue-500 mb-2 truncate">
+                  {question.name}'s Question:
+                </h4>
+                <p className="text-gray-200 break-words">
+                  {question.question}
+                </p>
               </div>
 
               {question.answer ? (
                 <div className="bg-[#232529] p-3 rounded-lg border border-gray-600 mt-2">
-                  <h4 className="text-md font-semibold text-green-400">Consultant's Reply</h4>
-                  <p className="text-gray-300 mt-2">{question.answer}</p>
+                  <h4 className="text-md font-semibold text-green-400 truncate">Consultant's Reply:</h4>
+                  <p className="text-gray-300 mt-2 break-words">
+                    {question.answer}
+                  </p>
                 </div>
               ) : (
                 role === 'CONSULTANT' && (
@@ -141,6 +148,7 @@ const ConsultantForumPage = () => {
             </div>
           ))}
         </div>
+
       </div>
       {/* Booking Modal */}
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>

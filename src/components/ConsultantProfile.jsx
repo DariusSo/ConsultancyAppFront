@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { handleApproveConsultation, handleRemoveAvailableTime, handleAddAvailableTime, handleSaveInfo, handleUploadPhoto } from "../modules/ConsultantProfile";
 import handleCancelConsultationAndRefund, {handleConnectToRoom, handleFetchUser } from "../modules/Consultations";
 import { getCookie } from "../modules/Cookies";
+import { Link } from "react-router-dom";
 
 export default function ConsultantProfile({
   user,
@@ -145,41 +146,50 @@ export default function ConsultantProfile({
   return (
     <div className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8 bg-gradient-to-b from-[#232529] to-[#2E2F33] text-gray-200 font-sans">
       {/* Left Section: Consultant Info */}
-      <div className="bg-[#2F3136] rounded-lg shadow p-6 border border-gray-700">
-        {user ? (
-          <>
-            <img
-              src={user.imageUrl || "https://via.placeholder.com/150"}
-              alt={user.firstName}
-              className="w-32 h-32 rounded-full mx-auto mb-4 border border-gray-600"
-            />
-            <h1 className="text-xl font-bold text-center">
-              {user.firstName} {user.lastName}
-            </h1>
-            <p className="text-center text-gray-400">{user.specialty}</p>
-            <p className="mt-4">
-              <strong>Email:</strong> {user.email}
-            </p>
-            <p>
-              <strong>Phone:</strong> {user.phone}
-            </p>
-            <p>
-              <strong>Description:</strong> {user.description}
-            </p>
-            <div className="mt-6 flex justify-center gap-4">
+      <div className="bg-[#2F3136] rounded-lg shadow p-6 border border-gray-700 h-[510px]">
+      {user ? (
+        <>
+          <img
+            src={user.imageUrl || "https://via.placeholder.com/150"}
+            alt={user.firstName}
+            className="w-32 h-32 rounded-full mx-auto mb-4 border border-gray-600"
+          />
+          <h1 className="text-xl font-bold text-center">
+            {user.firstName} {user.lastName}
+          </h1>
+          <p className="text-center text-gray-400">
+            <strong>Speciality:</strong> {user.speciality}
+          </p>
+          <p className="text-center text-gray-400">
+            <strong>Email:</strong> {user.email}
+          </p>
+          <p className="text-center text-gray-400">
+            <strong>Phone:</strong> {user.phone}
+          </p>
+          <p className="text-center text-gray-400">
+            <strong>Description:</strong> {user.description}
+          </p>
+          <div className="mt-6 space-y-4">
+          <Link to={"/consultant/" + user.id}>
               <button
-                onClick={handleEditInfo}
-                className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
+                className="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition transform hover:scale-105"
               >
-                Edit Info
+                Forum
               </button>
-              <button
-                onClick={handleAddPhoto}
-                className="py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg"
-              >
-                Add Photo
-              </button>
-            </div>
+            </Link>
+            <button
+              onClick={handleAddPhoto}
+              className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition transform hover:scale-105"
+            >
+              Add Photo
+            </button>
+            <button
+              onClick={handleEditInfo}
+              className="w-full py-2 px-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition transform hover:scale-105"
+            >
+              Edit Profile
+            </button>
+          </div>
           </>
         ) : (
           <p>Loading user info...</p>
