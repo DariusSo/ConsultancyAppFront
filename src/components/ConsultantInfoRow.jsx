@@ -14,23 +14,7 @@ const ConsultantInfoRow = ({ consultant }) => {
     categories,
     hourlyRate,
     email,
-    description,
-    availableTime,
   } = consultant;
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [availableDates, setAvailableDates] = useState([]);
-  const [timeSlotsByDate, setTimeSlotsByDate] = useState({});
-  const [problemTitle, setProblemTitle] = useState("");
-  const [problemDescription, setProblemDescription] = useState("");
-
-  useEffect(() => {
-
-    pushAvailableTimesToDatePicker(availableTime, setAvailableDates, setTimeSlotsByDate);
-    
-  }, [availableTime]);
 
   return (
     <>
