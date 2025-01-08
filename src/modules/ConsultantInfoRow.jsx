@@ -7,7 +7,7 @@ export const getAvailableTimes = (selectedDate, timeSlotsByDate) => {
     return timeSlotsByDate[selectedDateKey] || [];
   };
 
-export const handleBooking = async (selectedDate, consultant, setIsAuthModalOpen, problemTitle, problemDescription) => {
+export const handleBooking = async (selectedDate, consultant, setIsAuthModalOpen, problemTitle, problemDescription, setErrorMessage, setIsModalOpen) => {
     if (!selectedDate) {
       alert("Please select a valid date and time before booking.");
       return;
@@ -44,9 +44,11 @@ export const handleBooking = async (selectedDate, consultant, setIsAuthModalOpen
         },
         body: JSON.stringify(bookingPayload),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to book the appointment.");
+      if (response.status === 403) {
+        setIsModalOpen(false);
+        setErrorMessage("Consultants cant be clients, if you want to register for an appointment, you have to register as a client.");
+      } else if (!response.ok) {
+          throw new Error("Failed to book the appointment.");
       }
 
       const session = await response.json();
@@ -57,7 +59,6 @@ export const handleBooking = async (selectedDate, consultant, setIsAuthModalOpen
       }
     } catch (error) {
       console.error("Booking error:", error);
-      alert("Failed to book the appointment. Please try again later.");
     }
   };
 

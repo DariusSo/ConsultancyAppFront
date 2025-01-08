@@ -430,7 +430,6 @@ export default function ConsultantProfile({
           </button>
         </div>
       </div>
-      
       )}
     </div>
   );

@@ -21,6 +21,7 @@ const ConsultantForumPage = () => {
   const [availableDates, setAvailableDates] = useState([]);
   const [availableTime, setAvailableTime] = useState(null);
   const [timeSlotsByDate, setTimeSlotsByDate] = useState({});
+  const [errorMessage, setErrorMessage] = useState(null);
 
  useEffect(() => {
      pushAvailableTimesToDatePicker(availableTime, setAvailableDates, setTimeSlotsByDate);
@@ -31,6 +32,10 @@ const ConsultantForumPage = () => {
     fetchConsultantInfo(setConsultant, setAvailableTime, id);
     fetchForumMessages(setQuestions, id);
   }, [id]);
+
+  const closePopup = () => {
+    setErrorMessage(null);
+  };
 
   if (!consultant) {
     return <p className="text-gray-500">Loading consultant details...</p>;
@@ -220,7 +225,7 @@ const ConsultantForumPage = () => {
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => handleBooking(selectedDate, consultant, setIsAuthModalOpen, problemTitle, problemDescription)}
+                onClick={() => handleBooking(selectedDate, consultant, setIsAuthModalOpen, problemTitle, problemDescription, setErrorMessage, setIsModalOpen)}
                 disabled={!selectedDate}
                 className={
                   `px-4 py-2 rounded-md transition ` +
@@ -278,6 +283,19 @@ const ConsultantForumPage = () => {
           </Dialog.Panel>
         </div>
       </Dialog>
+      {errorMessage && (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-70 font-sans">
+        <div className="bg-[#2F3136] text-gray-200 p-6 rounded-lg shadow-lg border border-gray-600">
+          <p className="text-sm text-gray-300">{errorMessage}</p>
+          <button
+            onClick={closePopup}
+            className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+      )}
     </div>
   );
 };
