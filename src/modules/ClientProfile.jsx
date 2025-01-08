@@ -85,7 +85,7 @@ export const handleBooking = async (consultation) => {
   
       if (!imgData.success) {
         console.error("ImgBB upload failed:", imgData);
-        alert("Photo upload failed. Please try again.");
+        setErrorMessage("Photo upload failed. Please try again.");
         return;
       }
   

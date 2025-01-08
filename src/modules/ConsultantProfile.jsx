@@ -135,7 +135,7 @@ export const handleApproveConsultation = async (consultation, setApprovedConsult
           } else {
             console.log("Backend response:", await saveResponse.text());
             setUser(updatedUser); // Update the user state locally
-            alert("Photo uploaded and user updated successfully!");
+            setErrorMessage("Photo uploaded and user updated successfully!");
           }
         } else {
           console.error("ImgBB upload failed:", data);
