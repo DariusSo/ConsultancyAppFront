@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { handleFetchUser, handleConnectToRoom } from "../modules/Consultations";
 import handleCancelConsultationAndRefund from "../modules/Consultations";
 import { handleSaveInfo, handleUploadPhoto } from "../modules/ClientProfile";
+import { handleContinuePayment } from "../modules/Forum";
 
 export default function ClientProfile({
   user,
@@ -83,7 +84,7 @@ export default function ClientProfile({
           </button>
           {!consultation.paid && (
             <button
-              onClick={() => alert("Pay Now")}
+              onClick={() => handleContinuePayment(consultation)}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition transform hover:scale-105"
             >
               Pay

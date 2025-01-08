@@ -1,4 +1,5 @@
 import { getCookie } from "./Cookies";
+import { loadStripe } from "@stripe/stripe-js";
 
 export const fetchUserProfile = async (setRole, setUserName) => {
     try {
@@ -113,5 +114,44 @@ export const handleReply = async (messageId, replyText, setQuestions, setReplyTe
       console.error('Error saving answer:', error);
     }
   };
+  export const handleContinuePayment = async (consultation) => {
+      const authToken = getCookie("loggedIn");
+      if (!authToken) {
+        setIsAuthModalOpen(true);
+        return;
+      }
+  
+      const stripe = await loadStripe("pk_test_51PlEGq2KAAK191iLnqMx4EzwlRUP93zGEFdyBKynSDBAtbQcJTR2TwbWiKYVSHLVWL0kBq7jK3vyWABKrHB8ZvRm00Kd1TqbuX");
+      if (!stripe) {
+        console.error("Failed to initialize Stripe");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:8080/create-checkout-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: getCookie("loggedIn"),
+          },
+          body: JSON.stringify(consultation),
+        });
+        if (response.status === 403) {
+          setIsModalOpen(false);
+          setErrorMessage("Consultants cant be clients, if you want to register for an appointment, you have to register as a client.");
+        } else if (!response.ok) {
+            throw new Error("Failed to book the appointment.");
+        }
+  
+        const session = await response.json();
+        const sessionId = session.id;
+        const { error } = await stripe.redirectToCheckout({ sessionId });
+        if (error) {
+          console.error("Stripe Checkout error:", error.message);
+        }
+      } catch (error) {
+        console.error("Booking error:", error);
+      }
+    };
 
 export default fetchForumMessages;

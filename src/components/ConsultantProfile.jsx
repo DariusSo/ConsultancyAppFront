@@ -242,9 +242,9 @@ export default function ConsultantProfile({
                     <span className="text-gray-300">Specialty:</span>
                     <input
                       type="text"
-                      value={editingUser?.specialty || ""}
+                      value={editingUser?.speciality || ""}
                       onChange={(e) =>
-                        setEditingUser((prev) => ({ ...prev, specialty: e.target.value }))
+                        setEditingUser((prev) => ({ ...prev, speciality: e.target.value }))
                       }
                       className="w-full mt-1 p-2 bg-[#2F3136] border border-gray-600 rounded-lg text-gray-300"
                     />
