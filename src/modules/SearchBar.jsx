@@ -1,3 +1,5 @@
+import { apiURL } from "./globals";
+
 export const fetchResults = async (date, specialty, category, hourlyRateFrom, hourlyRateTo, hasSearched, results, setResults) => {
     if (hourlyRateFrom && hourlyRateTo && Number(hourlyRateFrom) > Number(hourlyRateTo)) {
       console.error('Hourly Rate "From" should be less than or equal to "To".');
@@ -15,7 +17,7 @@ export const fetchResults = async (date, specialty, category, hourlyRateFrom, ho
 
     try {
       const response = await fetch(
-        `http://localhost:8080/consultant/search?${queryParams}`,
+        apiURL + `consultant/search?${queryParams}`,
         { method: 'GET' }
       );
       if (!response.ok) {

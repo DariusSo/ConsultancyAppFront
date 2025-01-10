@@ -37,7 +37,7 @@ const VideoChat = forwardRef((props, ref) => {
         remoteVideoRef
       ),
     disconnect: () =>
-      disconnectCall(peerConnectionRef, stompClientRef, localVideoRef, remoteVideoRef),
+      disconnectCall(peerConnectionRef, stompClientRef, localVideoRef, remoteVideoRef, setIsMuted),
   }));
 
   const toggleVideo = () => {

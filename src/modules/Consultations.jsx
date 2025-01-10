@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "./Cookies";
+import { apiURL } from "./globals";
 
 const handleCancelConsultationAndRefund = async (consultation) => {
       try {
         const response = await fetch(
-          `http://localhost:8080/refund?appointmentId=${consultation.id}`,
+          apiURL + `refund?appointmentId=${consultation.id}`,
           {
             method: "DELETE",
             headers: {
@@ -27,7 +28,7 @@ const handleCancelConsultationAndRefund = async (consultation) => {
 export const handleFetchUser = async (appointmentId) => {
   try {
     const response = await fetch(
-      `http://localhost:8080/appointments/info?appointmentId=${appointmentId}`,
+      apiURL + `appointments/info?appointmentId=${appointmentId}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -51,7 +52,7 @@ export const handleFetchUser = async (appointmentId) => {
 export const handleConnectToRoom = async (roomUuid) => {
   try {
     const response = await fetch(
-      `http://localhost:8080/appointments/connect?roomUuid=${roomUuid}`,
+      apiURL + `appointments/connect?roomUuid=${roomUuid}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +74,7 @@ export const handleConnectToRoom = async (roomUuid) => {
 };
 export const authenticateRoom = async (roomUuid) => {
       try {
-        const response = await fetch(`http://localhost:8080/auth/consultationRoom?roomUuid=${roomUuid}`, {
+        const response = await fetch(apiURL + `auth/consultationRoom?roomUuid=${roomUuid}`, {
           method: "GET",
           headers: {
             "Authorization": getCookie("loggedIn"),

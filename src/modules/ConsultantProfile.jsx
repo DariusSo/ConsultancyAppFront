@@ -1,5 +1,6 @@
 import { getCookie } from "./Cookies";
 import { format } from "date-fns"; // Install date-fns for easier date formatting
+import { apiURL } from "./globals";
 
 export const handleAddAvailableTime = async (availableTimes, setAvailableTimes, newAvailableTime) => {
     if (newAvailableTime) {
@@ -23,7 +24,7 @@ export const handleRemoveAvailableTime = (timeToRemove, availableTimes, setAvail
 
   const updateAvailableTime = async (updatedTimes) => {
     try {
-      const response = await fetch("http://localhost:8080/consultant/dates", {
+      const response = await fetch(apiURL + "consultant/dates", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -40,7 +41,7 @@ export const handleRemoveAvailableTime = (timeToRemove, availableTimes, setAvail
 export const handleApproveConsultation = async (consultation, setApprovedConsultations, setNotApprovedConsultations) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/appointments?appointmentId=${consultation.id}`,
+        apiURL + `appointments?appointmentId=${consultation.id}`,
         {
           method: "PUT",
           headers: {
@@ -67,7 +68,7 @@ export const handleApproveConsultation = async (consultation, setApprovedConsult
   export const handleSaveInfo = async (e, editingUser, setErrorMessage, setEditingUser, setShowEditModal, setShowPhotoModal, setPhotoFile) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/consultant/edit", {
+      const response = await fetch(apiURL + "consultant/edit", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -119,7 +120,7 @@ export const handleApproveConsultation = async (consultation, setApprovedConsult
           const updatedUser = { ...user, imageUrl: data.data.url };
     
           // Step 2: Save Updated User to Backend
-          const saveResponse = await fetch("http://localhost:8080/consultant/edit", {
+          const saveResponse = await fetch(apiURL + "consultant/edit", {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -133,7 +134,6 @@ export const handleApproveConsultation = async (consultation, setApprovedConsult
             console.error("Error saving user:", saveError);
             alert(saveError || "Failed to save updated user.");
           } else {
-            console.log("Backend response:", await saveResponse.text());
             setUser(updatedUser); // Update the user state locally
             setErrorMessage("Photo uploaded and user updated successfully!");
           }
@@ -143,7 +143,6 @@ export const handleApproveConsultation = async (consultation, setApprovedConsult
         }
       } catch (error) {
         console.error("Error uploading photo or saving user:", error);
-        alert("An error occurred while uploading the photo or saving user data.");
       }
     
       handleCloseModal();

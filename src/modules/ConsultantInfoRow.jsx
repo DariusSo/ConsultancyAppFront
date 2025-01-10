@@ -1,5 +1,6 @@
 import { getCookie } from "./Cookies";
 import { loadStripe } from "@stripe/stripe-js";
+import { apiURL } from "./globals";
 
 export const getAvailableTimes = (selectedDate, timeSlotsByDate) => {
     if (!selectedDate) return [];
@@ -36,7 +37,7 @@ export const handleBooking = async (selectedDate, consultant, setIsAuthModalOpen
     };
 
     try {
-      const response = await fetch("http://localhost:8080/create-checkout-session", {
+      const response = await fetch(apiURL + "create-checkout-session", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,7 +68,7 @@ export const handleBooking = async (selectedDate, consultant, setIsAuthModalOpen
       setIsModalOpen(true);
       setSelectedDate(null);
 
-      const response = await fetch(`http://localhost:8080/consultant/dates?id=${consultant.id}`, {
+      const response = await fetch(apiURL + `consultant/dates?id=${consultant.id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

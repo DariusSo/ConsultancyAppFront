@@ -14,11 +14,15 @@ const ChatWindow = forwardRef((props, ref) => {
   const nameRef = useRef("");
 
   useEffect(() => {
+    console.log("Messages state updated:", messages);
+  }, [messages]);
+
+  useEffect(() => {
     const fetchName = async () => {
       try {
         const user = await getName();
-        setName(user.firstName);
-        nameRef.current = user.firstName;
+        setName(user.firstName + " " + user.lastName);
+        nameRef.current = user.firstName + " " + user.lastName;
       } catch (error) {
         console.error("Error fetching user name:", error);
       }

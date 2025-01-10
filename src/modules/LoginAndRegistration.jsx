@@ -1,4 +1,5 @@
 import setCookie, { getCookie } from "./Cookies";
+import { apiURL } from "./globals";
 
 export const handleLogin = async (e, state, setState) => {
 
@@ -16,8 +17,8 @@ export const handleLogin = async (e, state, setState) => {
       // Select endpoint based on role
       const endpoint =
         role === 'CONSULTANT'
-          ? 'http://localhost:8080/auth/login/consultant'
-          : 'http://localhost:8080/auth/login/client';
+          ? apiURL + 'auth/login/consultant'
+          : apiURL + 'auth/login/client';
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -107,9 +108,9 @@ export const handleLogin = async (e, state, setState) => {
     try {
       let endpoint = '';
       if (role === 'CONSULTANT') {
-        endpoint = 'http://localhost:8080/auth/consultant';
+        endpoint = apiURL + 'auth/consultant';
       } else {
-        endpoint = 'http://localhost:8080/auth/client';
+        endpoint = apiURL + 'auth/client';
       }
 
       const response = await fetch(endpoint, {

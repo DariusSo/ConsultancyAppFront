@@ -1,11 +1,12 @@
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client/dist/sockjs.min.js";
+import { apiURL } from "./globals";
 
 export const connectToWebRTC = (stompClientRef, roomUuid, peerConnectionRef, iceCandidateQueue, peerId) => {
     if (stompClientRef.current) return;
 
-    const socket = new SockJS("http://localhost:8080/websocket");
-    const stompClient = Stomp.over(socket);
+      const socketFactory = () => new SockJS(apiURL + "websocket");
+      const stompClient = Stomp.over(socketFactory);
 
     stompClient.connect({}, () => {
       stompClient.subscribe(`/topic/signal/${roomUuid}`, (message) => {
@@ -77,8 +78,8 @@ export const startCall = async (peerConnectionRef, stompClientRef, receivedStrea
         iceServers: [
           {
             urls: "turn:109.199.113.183:3478",
-            username: "root",
-            credential: "",
+            username: "consultation",
+            credential: "BatBatBat3.",
           },
         ],
         iceTransportPolicy: "relay",
@@ -132,7 +133,7 @@ export const startCall = async (peerConnectionRef, stompClientRef, receivedStrea
     }
   };
 
-export const disconnectCall = (peerConnectionRef, stompClientRef, localVideoRef, remoteVideoRef) => {
+export const disconnectCall = (peerConnectionRef, stompClientRef, localVideoRef, remoteVideoRef, setIsMuted) => {
     if (peerConnectionRef.current) {
       peerConnectionRef.current.close();
       peerConnectionRef.current = null;
@@ -151,6 +152,7 @@ export const disconnectCall = (peerConnectionRef, stompClientRef, localVideoRef,
       remoteVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
       remoteVideoRef.current.srcObject = null;
     }
+    setIsMuted(false);
   };
 
 export const toggleMute = (localVideoRef, setIsMuted) => {

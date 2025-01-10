@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import ConsultantInfoRow from "./ConsultantInfoRow";
+import { apiURL } from "../modules/globals";
 
 const ConsultantList = () => {
   const [consultants, setConsultants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   useEffect(() => {
     const fetchConsultants = async () => {
       try {
-        const response = await fetch("http://localhost:8080/consultant/newest");
+        const response = await fetch(apiURL + "consultant/newest");
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }

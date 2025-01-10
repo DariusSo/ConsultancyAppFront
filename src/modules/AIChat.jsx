@@ -1,4 +1,5 @@
 import { getCookie } from "./Cookies";
+import { apiURL } from "./globals";
 
 export const sendMessage = async (consultantCategory, setMessages, setLoading, userMessage, setUserMessage) => {
     if (userMessage.trim() === "") return;
@@ -17,7 +18,7 @@ export const sendMessage = async (consultantCategory, setMessages, setLoading, u
       // API call to fetch AI response
       const token = getCookie("loggedIn"); // Replace with your actual cookie name
       const response = await fetch(
-        `http://localhost:8080/ai?message=${encodeURIComponent(
+        apiURL + `ai?message=${encodeURIComponent(
           currentMessage
         )}&consultantCategory=${encodeURIComponent(consultantCategory)}`, // Use category from URL
         {

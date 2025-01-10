@@ -1,9 +1,10 @@
 import { getCookie } from "./Cookies";
 import { loadStripe } from "@stripe/stripe-js";
+import { apiURL } from "./globals";
 
 export const fetchUserProfile = async (setRole, setUserName) => {
     try {
-    const response = await fetch('http://localhost:8080/auth/profile', {
+    const response = await fetch(apiURL + 'auth/profile', {
         headers: {
         Authorization: getCookie("loggedIn"),
         },
@@ -22,7 +23,7 @@ export const fetchUserProfile = async (setRole, setUserName) => {
 
 export const fetchConsultantInfo = async (setConsultant, setAvailableTime, id) => {
     try {
-    const response = await fetch(`http://localhost:8080/consultant/id?id=${id}`, {
+    const response = await fetch(apiURL + `consultant/id?id=${id}`, {
         headers: {
         Authorization: getCookie("loggedIn"),
         },
@@ -42,7 +43,7 @@ export const fetchConsultantInfo = async (setConsultant, setAvailableTime, id) =
 
 export const fetchForumMessages = async (setQuestions, id) => {
     try {
-    const response = await fetch(`http://localhost:8080/forum?consultantId=${id}`);
+    const response = await fetch(apiURL + `forum?consultantId=${id}`);
     if (response.ok) {
         const messages = await response.json();
         setQuestions(messages);
@@ -65,7 +66,7 @@ export const handlePostQuestion = async (text, userName, id, setQuestions, setNe
     };
 
     try {
-      const response = await fetch('http://localhost:8080/forum', {
+      const response = await fetch(apiURL + 'forum', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +94,7 @@ export const handleReply = async (messageId, replyText, setQuestions, setReplyTe
     if (!replyText[messageId] || replyText[messageId].trim() === '') return;
 
     try {
-      const response = await fetch(`http://localhost:8080/forum?messageId=${messageId}&message=${encodeURIComponent(replyText[messageId])}`, {
+      const response = await fetch(apiURL + `forum?messageId=${messageId}&message=${encodeURIComponent(replyText[messageId])}`, {
         method: 'PUT',
         headers: {
           Authorization: getCookie("loggedIn"),
@@ -128,7 +129,7 @@ export const handleReply = async (messageId, replyText, setQuestions, setReplyTe
       }
 
       try {
-        const response = await fetch("http://localhost:8080/create-checkout-session", {
+        const response = await fetch(apiURL + "create-checkout-session", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

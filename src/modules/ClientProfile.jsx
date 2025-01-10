@@ -1,5 +1,6 @@
 import { getCookie } from "./Cookies";
 import { loadStripe } from "@stripe/stripe-js";
+import { apiURL } from "./globals";
 
 export const handleBooking = async (consultation) => {
 
@@ -10,7 +11,7 @@ export const handleBooking = async (consultation) => {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/create-checkout-session", {
+      const response = await fetch(apiURL + "create-checkout-session", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,7 +39,7 @@ export const handleBooking = async (consultation) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:8080/client/edit", {
+      const response = await fetch(apiURL + "client/edit", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -94,7 +95,7 @@ export const handleBooking = async (consultation) => {
       // Step 2: Save Updated User to Backend
       const updatedUser = { ...user, imageUrl: imgData.data.url };
   
-      const saveResponse = await fetch("http://localhost:8080/client/edit", {
+      const saveResponse = await fetch(apiURL + "client/edit", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

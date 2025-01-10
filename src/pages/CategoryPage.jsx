@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import ConsultantInfoRow from "../components/ConsultantInfoRow";
+import { apiURL } from "../modules/globals";
 
 const CategoryPage = () => {
   const { category } = useParams(); // Get the category from URL params
@@ -12,7 +13,7 @@ const CategoryPage = () => {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://localhost:8080/consultant/category?category=${category.toUpperCase()}`
+          apiURL + `consultant/category?category=${category.toUpperCase()}`
         );
         if (!response.ok) {
           throw new Error(`Failed to fetch data: ${response.status}`);

@@ -1,7 +1,8 @@
 import { getCookie } from "./Cookies";
+import { apiURL } from "./globals";
 
 export const fetchUserData = async () => {
-    const response = await fetch("http://localhost:8080/auth/profile", {
+    const response = await fetch(apiURL + "auth/profile", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -18,7 +19,7 @@ export const fetchUserData = async () => {
     return data;
   };
 export const fetchAppointments = async () => {
-    const response = await fetch("http://localhost:8080/appointments", {
+    const response = await fetch(apiURL + "appointments", {
       headers: {
         Authorization: getCookie("loggedIn"),
       },

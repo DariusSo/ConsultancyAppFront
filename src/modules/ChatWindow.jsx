@@ -1,16 +1,19 @@
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client/dist/sockjs.min.js";
 import { getCookie } from "./Cookies";
+import { apiURL } from "./globals";
 
 export const connect = (roomUuid, setMessages, stompClientRef, nameRef) => {
-    const socket = new SockJS("http://localhost:8080/websocket");
-    const stompClient = Stomp.over(socket);
+    const socketFactory = () => new SockJS(apiURL + "websocket");
+    const stompClient = Stomp.over(socketFactory);
 
     stompClient.connect({}, (frame) => {
       console.log("Connected:", frame);
       stompClient.subscribe(`/topic/consultation/${roomUuid}`, (message) => {
         const receivedMessage = JSON.parse(message.body);
-        if (receivedMessage.name !== nameRef.current) {
+        console.log("Received message:", receivedMessage);
+        console.log("Current name:", nameRef.current);
+        if (receivedMessage.name != nameRef.current) {
           setMessages((prev) => [
             ...prev,
             {
@@ -55,7 +58,7 @@ export const sendMessage = (newMessage, stompClientRef, name, roomUuid) => {
 
 export async function getName() {
   const token = getCookie("loggedIn");
-  const apiUrl = "http://localhost:8080/auth/profile";
+  const apiUrl = apiURL + "auth/profile";
   try {
     const response = await fetch(apiUrl, {
       method: "GET",
