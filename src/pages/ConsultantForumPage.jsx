@@ -6,18 +6,18 @@ import handleBooking, { getAvailableTimes, pushAvailableTimesToDatePicker } from
 import fetchForumMessages, { fetchConsultantInfo, fetchUserProfile, handlePostQuestion, handleReply } from '../modules/Forum';
 
 const ConsultantForumPage = () => {
-  const id = useParams().id; // Get consultant ID from URL
+  const id = useParams().id;
   const [questions, setQuestions] = useState([]);
   const [newQuestion, setNewQuestion] = useState('');
   const [replyText, setReplyText] = useState({});
-  const [role, setRole] = useState(null); // 'CLIENT' or 'CONSULTANT'
-  const [userName, setUserName] = useState(''); // To store the user's name
-  const [consultant, setConsultant] = useState(null); // To store consultant info
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for booking modal
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false); // State for authentication modal
-  const [selectedDate, setSelectedDate] = useState(null); // State for selected date
-  const [problemTitle, setProblemTitle] = useState(''); // State for problem title
-  const [problemDescription, setProblemDescription] = useState(''); // State for problem description
+  const [role, setRole] = useState(null);
+  const [userName, setUserName] = useState('');
+  const [consultant, setConsultant] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [problemTitle, setProblemTitle] = useState('');
+  const [problemDescription, setProblemDescription] = useState('');
   const [availableDates, setAvailableDates] = useState([]);
   const [availableTime, setAvailableTime] = useState(null);
   const [timeSlotsByDate, setTimeSlotsByDate] = useState({});

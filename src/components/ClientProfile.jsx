@@ -17,6 +17,7 @@ export default function ClientProfile({
   const [isAddingPhoto, setIsAddingPhoto] = useState(false); // Toggle add photo modal
   const [photoFile, setPhotoFile] = useState(null); // File for photo upload
 
+  //Temp user for editing
   useEffect(() => {
     if (user) {
       setTempUser(user);
@@ -33,6 +34,7 @@ export default function ClientProfile({
     }
   };
 
+  //Map users info to appointments
   useEffect(() => {
     const allAppointments = [
       ...approvedConsultations,
@@ -40,6 +42,7 @@ export default function ClientProfile({
     ];
     allAppointments.forEach((consultation) => fetchUserInfo(consultation.id));
   }, [approvedConsultations, notApprovedConsultations]);
+
 
   const handleOpenEditModal = () => {
     setTempUser({ ...user });
@@ -51,7 +54,7 @@ export default function ClientProfile({
   };
 
   
-
+  //Chect if its time to connect and redirect
   const handleConnect = async (roomUuid) => {
     const canConnect = await handleConnectToRoom(roomUuid);
     if (!canConnect) {

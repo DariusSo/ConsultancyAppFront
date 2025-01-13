@@ -16,6 +16,7 @@ const VideoChat = forwardRef((props, ref) => {
   const params = useParams();
   const roomUuid = params.id;
 
+  //Send functions to parent object
   useImperativeHandle(ref, () => ({
     connect: () =>
       connectToWebRTC(
@@ -40,6 +41,7 @@ const VideoChat = forwardRef((props, ref) => {
       disconnectCall(peerConnectionRef, stompClientRef, localVideoRef, remoteVideoRef, setIsMuted),
   }));
 
+  //Mute video
   const toggleVideo = () => {
     if (localVideoRef.current && localVideoRef.current.srcObject) {
       const videoTrack = localVideoRef.current.srcObject

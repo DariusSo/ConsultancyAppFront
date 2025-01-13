@@ -17,6 +17,7 @@ const AIChat = () => {
     if (e.key === "Enter") sendMessage();
   };
 
+  //Authorization
   useEffect(() => {
     if(!getCookie("loggedIn")){
       navigate("/login");

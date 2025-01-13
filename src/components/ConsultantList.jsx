@@ -6,6 +6,8 @@ const ConsultantList = () => {
   const [consultants, setConsultants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  //Get newest consultants list
   useEffect(() => {
     const fetchConsultants = async () => {
       try {

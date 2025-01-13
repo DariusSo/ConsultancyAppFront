@@ -1,6 +1,7 @@
 import { getCookie } from "./Cookies";
 import { apiURL } from "./globals";
 
+//Get user's info for profile page
 export const fetchUserData = async () => {
     const response = await fetch(apiURL + "auth/profile", {
       method: "GET",
@@ -18,6 +19,8 @@ export const fetchUserData = async () => {
     const data = await response.json();
     return data;
   };
+
+//Get user's appointments
 export const fetchAppointments = async () => {
     const response = await fetch(apiURL + "appointments", {
       headers: {
@@ -35,50 +38,51 @@ export const fetchAppointments = async () => {
   };
   
 export const processUserData = (data, { setRole, setUser, setAvailableTimes, setApprovedConsultations, setNotApprovedConsultations }) => {
-    console.log(data);
-    setRole(data.role);
-    setUser(data);
+  setRole(data.role);
+  setUser(data);
+
+  if (data.role === "CONSULTANT") {
+    const parsedTimes = JSON.parse(data.availableTime);
+    setAvailableTimes(parsedTimes || []);
+  }
+};
   
-    if (data.role === "CONSULTANT") {
-      const parsedTimes = JSON.parse(data.availableTime);
-      setAvailableTimes(parsedTimes || []);
-    }
-  };
-  
+//Logic for setting approved and not approved appointments
 export const processAppointments = (data, setApprovedConsultations, setNotApprovedConsultations, role) => {
-    const approved = [];
-    const notApproved = [];
-    data.forEach((appointment) => {
-      console.log(appointment);
-      console.log(role);
-      if (appointment.accepted) {
-        approved.push(appointment);
-      } else {
-        if(role == "CONSULTANT" && !appointment.paid){
+  const approved = [];
+  const notApproved = [];
+  data.forEach((appointment) => {
+    console.log(appointment);
+    console.log(role);
+    if (appointment.accepted) {
+      approved.push(appointment);
+    } else {
+      if(role == "CONSULTANT" && !appointment.paid){
 
-        }else{
-          notApproved.push(appointment);
-        }
+      }else{
+        notApproved.push(appointment);
       }
-    });
-    setApprovedConsultations(approved);
-    setNotApprovedConsultations(notApproved);
-  };
-
-  export const fetchAndProcessData = async ({ setRole, setUser, setAvailableTimes, setApprovedConsultations, setNotApprovedConsultations, role }) => {
-    try {
-      const userData = await fetchUserData();
-      console.log(userData);
-      var roleVar = userData.role;
-      if (userData) {
-        processUserData(userData, { setRole, setUser, setAvailableTimes, setApprovedConsultations, setNotApprovedConsultations });
-      }
-
-      const appointmentsData = await fetchAppointments();
-      processAppointments(appointmentsData, setApprovedConsultations, setNotApprovedConsultations, roleVar);
-    } catch (err) {
-      console.error("Error during data fetching:", err);
     }
-  };
+  });
+  setApprovedConsultations(approved);
+  setNotApprovedConsultations(notApproved);
+};
+
+//Logic for setting info for profile page
+export const fetchAndProcessData = async ({ setRole, setUser, setAvailableTimes, setApprovedConsultations, setNotApprovedConsultations, role }) => {
+  try {
+    const userData = await fetchUserData();
+    console.log(userData);
+    var roleVar = userData.role;
+    if (userData) {
+      processUserData(userData, { setRole, setUser, setAvailableTimes, setApprovedConsultations, setNotApprovedConsultations });
+    }
+
+    const appointmentsData = await fetchAppointments();
+    processAppointments(appointmentsData, setApprovedConsultations, setNotApprovedConsultations, roleVar);
+  } catch (err) {
+    console.error("Error during data fetching:", err);
+  }
+};
 
 export default fetchUserData;

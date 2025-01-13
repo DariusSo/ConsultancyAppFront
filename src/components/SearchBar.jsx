@@ -12,6 +12,7 @@ const SearchBar = () => {
   const [results, setResults] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
 
+  //Logic for empty parameters to show none of the users instead of all
   useEffect(() => {
     const isAllDefault =
       !specialty &&

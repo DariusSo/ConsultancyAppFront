@@ -14,10 +14,6 @@ const ChatWindow = forwardRef((props, ref) => {
   const nameRef = useRef("");
 
   useEffect(() => {
-    console.log("Messages state updated:", messages);
-  }, [messages]);
-
-  useEffect(() => {
     const fetchName = async () => {
       try {
         const user = await getName();
@@ -31,6 +27,7 @@ const ChatWindow = forwardRef((props, ref) => {
     fetchName();
   }, []);
 
+  //Sending functions to parent object
   useImperativeHandle(ref, () => ({
       connectToChat: () => connect(roomUuid, setMessages, stompClientRef, nameRef),
   }));

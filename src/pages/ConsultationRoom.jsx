@@ -6,7 +6,7 @@ import { authenticateRoom } from "../modules/Consultations";
 
 function MainPage() {
   const [isMobile, setIsMobile] = useState(false);
-  const [isConnected, setIsConnected] = useState(false); // Track connection state
+  const [isConnected, setIsConnected] = useState(false);
   const videoChatRef = useRef(null);
   const chatRef = useRef(null);
   const roomUuid = useParams().id;
@@ -24,10 +24,10 @@ function MainPage() {
 
   const handleConnectToVideoAndChat = () => {
     if (videoChatRef.current && chatRef.current) {
-      videoChatRef.current.connect(); // Connect to video chat
+      videoChatRef.current.connect();
       videoChatRef.current.startCall();
-      chatRef.current.connectToChat(); // Connect to chat
-      setIsConnected(true); // Update state to connected
+      chatRef.current.connectToChat();
+      setIsConnected(true);
     } else {
       console.error("VideoChat or ChatWindow ref is not available.");
     }
@@ -35,8 +35,8 @@ function MainPage() {
 
   const handleDisconnectVideoAndChat = () => {
     if (videoChatRef.current && chatRef.current) {
-      videoChatRef.current.disconnect(); // Disconnect video chat
-      setIsConnected(false); // Update state to disconnected
+      videoChatRef.current.disconnect();
+      setIsConnected(false);
     } else {
       console.error("VideoChat or ChatWindow ref is not available.");
     }
@@ -45,10 +45,9 @@ function MainPage() {
   // Detect screen size and update state
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 968); // Treat width <= 968px as mobile
+      setIsMobile(window.innerWidth <= 968);
     };
-
-    handleResize(); // Initial check
+    handleResize();
     window.addEventListener("resize", handleResize);
 
     return () => {

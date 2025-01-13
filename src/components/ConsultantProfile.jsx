@@ -33,18 +33,16 @@ export default function ConsultantProfile({
       setShowPhotoModal(true);
     };
 
-  // Open edit modal and initialize editingUser
   const handleEditInfo = () => {
-    setEditingUser({ ...user }); // Clone current user into editingUser
+    setEditingUser({ ...user });
     setShowEditModal(true);
   };
 
-  // Close modal and discard unsaved changes
   const handleCloseModal = () => {
     setShowEditModal(false);
-    setShowPhotoModal(false); // Close the photo modal as well
-    setEditingUser(null); // Reset editing user state
-    setPhotoFile(null); // Clear the selected photo file
+    setShowPhotoModal(false);
+    setEditingUser(null);
+    setPhotoFile(null);
   };
 
   const handlePhotoChange = (e) => {
@@ -76,7 +74,7 @@ export default function ConsultantProfile({
   };
 
       
-
+   //Map users info to appointments
   useEffect(() => {
     const allAppointments = [
       ...approvedConsultations,
